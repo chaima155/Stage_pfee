@@ -1,0 +1,66 @@
+<div class="entretien-container">
+  <div class="form-header">
+    <div class="header-icon">
+      <i class="fas fa-calendar-check"></i>
+    </div>
+    <h2 class="form-title">Ajouter un Entretien</h2>
+    <p class="form-subtitle">Planifiez un nouvel entretien avec un candidat</p>
+  </div>
+
+  <form #form="ngForm" (ngSubmit)="saveEntretien(form)" class="entretien-form">
+    
+    <!-- Date -->
+    <div class="form-group" [class.has-error]="form.submitted && !entretien.date">
+      <label for="date" class="form-label">
+        <i class="fas fa-calendar-alt"></i> Date de l'entretien <span class="required">*</span>
+      </label>
+      <div class="date-input-wrapper">
+        <input 
+          type="datetime-local"
+          id="date"
+          name="date"
+          [(ngModel)]="entretien.date"
+          required
+          class="form-control"
+          [class.is-invalid]="form.submitted && !entretien.date"
+        >
+        <i class="fas fa-calendar-check input-icon"></i>
+      </div>
+      <div *ngIf="form.submitted && !entretien.date" class="error-message">
+        <i class="fas fa-exclamation-circle"></i> La date est obligatoire
+      </div>
+    </div>
+
+    <!-- Sujet de stage -->
+    <div class="form-group" [class.has-error]="form.submitted && !entretien.sujetStageId">
+      <label for="sujetStage" class="form-label">
+        <i class="fas fa-clipboard-list"></i> Sujet de stage <span class="required">*</span>
+      </label>
+      <select
+        id="sujetStage"
+        name="sujetStageId"
+        [(ngModel)]="entretien.sujetStageId"
+        required
+        class="form-control"
+        [class.is-invalid]="form.submitted && !entretien.sujetStageId"
+      >
+        <option value="" disabled>-- Sélectionnez un sujet --</option>
+        <option *ngFor="let sujet of sujets" [value]="sujet.id">{{ sujet.titre }}</option>
+      </select>
+      <div *ngIf="form.submitted && !entretien.sujetStageId" class="error-message">
+        <i class="fas fa-exclamation-circle"></i> Le sujet est obligatoire
+      </div>
+    </div>
+
+    <!-- Bouton -->
+    <div class="form-actions">
+      <button type="submit" class="btn-submit">Enregistrer</button>
+    </div>
+
+    <!-- Indicateur de validation -->
+    <div *ngIf="form.submitted && form.valid" class="success-message">
+      <i class="fas fa-check-circle"></i> Formulaire prêt à être envoyé
+    </div>
+
+  </form>
+</div>
