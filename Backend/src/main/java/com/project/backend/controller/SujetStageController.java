@@ -2,6 +2,7 @@ package com.project.backend.controller;
 
 import com.project.backend.Repository.SujetStageRepository;
 import com.project.backend.model.SujetStage;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,10 +63,16 @@ public class SujetStageController {
         }}
 
     // Supprimer un sujet
+    @Transactional
     @DeleteMapping("/{id}")
-    public String deleteSujet(@PathVariable Long id) {
-        sujetStageRepository.deleteById(id);
-        return "Sujet supprimé avec succès";
+    public ResponseEntity<String> deleteSujet(@PathVariable Long id) {
+        try {
+            sujetStageRepository.deleteById(id);
+            return ResponseEntity.ok("Sujet supprimé avec succès");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur suppression: " + e.getMessage());
+        }
     }
 
 }

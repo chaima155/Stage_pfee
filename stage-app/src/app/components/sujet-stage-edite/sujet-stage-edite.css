@@ -1,0 +1,156 @@
+/* ======== Général ======== */
+.create-page {
+  max-width: 100%; /* ✅ Augmenter de 800px → 1100px */
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(62, 7, 243, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333333;
+}
+
+/* ======== Titre de la page ======== */
+.page-title-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.main-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.title-sub {
+  font-size: 16px;
+  color: #7f8c8d;
+}
+
+/* ======== Formulaire ======== */
+.form-wrapper {
+  width: 100%;
+}
+
+.professional-form .form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.professional-form .form-row.double {
+  flex-direction: row;
+  gap: 20px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #34495e;
+}
+
+.required {
+  color: #e74c3c;
+  margin-left: 2px;
+}
+
+.form-control {
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px;
+  transition: 0.3s;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.textarea {
+  resize: vertical;
+}
+.content-wrapper {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 25px 30px;
+  width: 100%;        /* ✅ 100% au lieu de 1000px */
+  box-sizing: border-box;
+}
+
+/* ======== Petits textes ======== */
+.form-hint {
+  font-size: 12px;
+  color: #95a5a6;
+  margin-top: 4px;
+}
+
+.error-text {
+  font-size: 12px;
+  color: #e74c3c;
+  margin-top: 4px;
+}
+
+/* ======== Boutons ======== */
+.form-row.submit-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.btn-submit {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #2980b9;
+}
+
+.btn-cancel {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-cancel:hover {
+  background-color: #bdc3c7;
+}
+
+/* ======== Message de succès ======== */
+.success-message {
+  background-color: #2ecc71;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ======== Responsive ======== */
+@media (max-width: 600px) {
+  .form-row.double {
+    flex-direction: column;
+  }
+}

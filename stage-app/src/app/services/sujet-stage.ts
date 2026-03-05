@@ -12,7 +12,6 @@ export class SujetStageService {
    private apiUrl = 'http://localhost:8081/api/sujets'; // URL de Spring Boot
 
     constructor(private http: HttpClient) {
-      this.getSujets();
     }
 
     // Ajouter un sujet dans la base via Spring Boot
@@ -29,6 +28,10 @@ export class SujetStageService {
     updateSujet(id: number, sujet: SujetStage): Observable<SujetStage> {
       return this.http.put<SujetStage>(`${this.apiUrl}/${id}`, sujet);
     }
+      // Dans sujet-stage.service.ts ✅ déjà présent dans votre backend
+    getSujetById(id: number): Observable<SujetStage> {
+      return this.http.get<SujetStage>(`${this.apiUrl}/${id}`);
+}
 
 
 

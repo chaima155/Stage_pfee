@@ -13,14 +13,14 @@ export const routes: Routes = [
   { path: 'entretien/create', component: EntretienCreate },
   { path: 'create', component: SujetStageCreate },
   { path: 'list', component: SujetStageList },
-  { path: 'edite/{id}', component: SujetStageEdite },
+  { path: 'edite/:id', component: SujetStageEdite },
   {
     path: 'dashbord',
     component: AdminLayout,
     children: [
       { path: 'create', component: SujetStageCreate },
       { path: 'list', component: SujetStageList },
-      { path: 'edite/{id}', component: SujetStageEdite },
+      { path: 'edite/:id', component: SujetStageEdite },
       { path: 'header', component: Header},
       { path: 'sidebar', component: Sidebar},
       { path: 'footer', component: Footer},

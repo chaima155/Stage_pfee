@@ -5,6 +5,7 @@
       <i class="fas fa-list-alt"></i>
       Liste des sujets de stage
     </h2>
+    
     <button (click)="goToCreate()" class="btn-add">
       <i class="fas fa-plus"></i>
       Ajouter Sujet Stage
@@ -21,6 +22,7 @@
           <th>Description</th>
           <th>Niveau</th>
           <th>Durée</th>
+          <th>Date Entretien</th> 
           <th>Actions</th>
         </tr>
       </thead>
@@ -54,11 +56,25 @@
           <td class="duree-cell">
             <span class="duree-badge">{{ sujet.duree }} mois</span>
           </td>
+          <td>
+  
+          <div *ngIf="sujet.entretien && sujet.entretien.length > 0">
+            <span 
+              *ngFor="let e of sujet.entretien" 
+              class="badge niveau" 
+              style="display:block; margin-bottom:4px;">
+              {{ e.date | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+          <span *ngIf="!sujet.entretien || sujet.entretien.length === 0" class="text-muted">
+            Aucun entretien
+          </span>
+        </td>
           <td class="actions-cell">
-            <button class="btn-edit" title="Modifier">
+            <button class="btn-edit" (click)="editSujet(sujet.id!)" title="Modifier">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-delete" title="Supprimer">
+            <button class="btn-delete" (click)="deleteSujet(sujet.id!)" title="Supprimer">
               <i class="fas fa-trash"></i>
             </button>
           </td>

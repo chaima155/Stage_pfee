@@ -1,5 +1,6 @@
 package com.project.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ public class Entretien {
     private Long id;
     private Date date;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "sujet_stage_id")
     private SujetStage sujetStage;
 

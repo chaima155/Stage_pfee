@@ -19,7 +19,7 @@ export class SujetStageCreate {
       motsCles: '',
       nbrStagiaires: 1,      // Changé de 0 à 1 (plus logique)
       niveau: '',
-      duree: 6,               // Changé de 0 à 6 (valeur par défaut)
+      duree: 2,               // Changé de 0 à 6 (valeur par défaut)
       technologies: ''
     };
 
@@ -32,24 +32,21 @@ export class SujetStageCreate {
     ) {}
 
     saveSujet(): void {
-      this.submitAttempted = true;
+  this.submitAttempted = true;
 
-      // Vérification simple des champs obligatoires
-      if (!this.sujet.titre || !this.sujet.description) {
-        console.warn('Champs obligatoires manquants');
-        return;
-      }
+  if (!this.sujet.titre || !this.sujet.description) {
+    console.warn('Champs obligatoires manquants');
+    return;
+  }
 
-      this.sujetService.addSujet(this.sujet).subscribe({
-        next: () => {
-          this.showSuccessMessage = true;
-          setTimeout(() => {
-            this.router.navigate(['dashbord/list']);
-          });
-        },
-        error: (err) => console.error('Erreur lors de l\'enregistrement', err)
-      });
-    }
+  this.sujetService.addSujet(this.sujet).subscribe({
+    next: () => {
+      console.log('Navigation vers list...');  // ✅ pour vérifier
+      this.router.navigate(['/dashbord/list']);
+    },
+    error: (err) => console.error('Erreur:', err)
+  });
+}
 
     // Méthode pour réinitialiser le formulaire
     resetForm(): void {
@@ -59,7 +56,7 @@ export class SujetStageCreate {
         motsCles: '',
         nbrStagiaires: 1,
         niveau: '',
-        duree: 6,
+        duree: 2,
         technologies: ''
       };
       this.submitAttempted = false;

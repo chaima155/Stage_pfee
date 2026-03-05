@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Entretien } from '../model/entretien';
 
 
 @Injectable({
@@ -12,7 +11,7 @@ export class EntretienService {
    constructor(private http: HttpClient) {}
 
    // Ajouter un entretien 
-       addentretien(entretien: Entretien): Observable<Entretien> {
-         return this.http.post<Entretien>(this.apiUrl, entretien);
-       }
+       addentretien(entretien: any): Observable<any> {
+        return this.http.post<any>(this.apiUrl, entretien);
+}
 }

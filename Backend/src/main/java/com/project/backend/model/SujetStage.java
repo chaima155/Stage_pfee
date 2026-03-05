@@ -22,11 +22,11 @@ public class SujetStage {
     private String technologies;
     private LocalDateTime dateposte;
 
-    @OneToMany(mappedBy = "sujetStage")
-    @JsonIgnore
+    @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Entretien> entretien;
 
-    @OneToMany(mappedBy = "sujetStage")
+    @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Candidature> candidatures;
 

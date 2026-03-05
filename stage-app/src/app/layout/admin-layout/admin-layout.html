@@ -3,7 +3,7 @@
 
 <main class="main-content">
   <div class="content-wrapper">
-    <router-outlet></router-outlet>  <!-- C'est ici que la page create s'affiche -->
+    <router-outlet (activate)="onActivate()"></router-outlet>  <!-- C'est ici que la page create s'affiche -->
   </div>
 </main>
 

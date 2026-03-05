@@ -1,63 +1,87 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { SujetStageService } from '../../services/sujet-stage';
 import { SujetStage } from '../../model/sujet-stage';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sujet-stage-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],  // RouterModule pour routerLink
+  imports: [CommonModule, RouterModule],
   templateUrl: './sujet-stage-list.html',
   styleUrls: ['./sujet-stage-list.css']
 })
-export class SujetStageList implements OnInit {
+export class SujetStageList implements OnInit, OnDestroy {
   sujets: SujetStage[] = [];
   loading: boolean = false;
   error: string | null = null;
+  private routerSub!: Subscription;
 
   constructor(
     private sujetService: SujetStageService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private cdr: ChangeDetectorRef  // ✅ Ajouter
+  ) {}
 
   ngOnInit(): void {
     this.loadSujets();
-    this.sujetService.getSujets().subscribe((data: any[]) => {
-    this.sujets = data; // cette liste doit contenir des objets {id, titre}
-    console.log(this.sujets); // <- vérifie ce qui arrive du backend
-  });
+
+    this.routerSub = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.loadSujets();
+    });
   }
 
-  /**
-   * Charge tous les sujets depuis le service
-   */
+  ngOnDestroy(): void {
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+  }
+
   loadSujets(): void {
     this.loading = true;
-    this.error = null;
-    
+    this.cdr.detectChanges(); // ✅ Forcer la détection après loading = true
+
     this.sujetService.getSujets().subscribe({
       next: (data) => {
-        console.log('✅ Données reçues:', data);
         this.sujets = data;
         this.loading = false;
+        this.cdr.detectChanges(); // ✅ Forcer la détection après réception des données
+      },
+      error: (err) => {
+        console.error('❌ Erreur:', err);
+        this.error = 'Impossible de charger les sujets.';
+        this.loading = false;
+        this.cdr.detectChanges(); // ✅ Forcer la détection après erreur
       }
     });
   }
 
-  /**
-   * Navigation vers la page de création
-   */
   goToCreate(): void {
-    this.router.navigate(['dashbord/create']);
+    this.router.navigate(['/dashbord/create']);
   }
 
-  /**
-   * Rafraîchir la liste
-   */
   refreshList(): void {
     this.loadSujets();
   }
 
-  
+  // ✅ Ajouter dans sujet-stage-list.ts
+editSujet(id: number): void {
+  this.router.navigate(['/dashbord/edite', id]);
+}
+
+deleteSujet(id: number): void {
+  if (confirm('Voulez-vous vraiment supprimer ce sujet ?')) {
+    this.sujetService.deleteSujet(id).subscribe({
+      next: () => {
+        console.log('✅ Sujet supprimé');
+        this.loadSujets(); // ✅ Recharger la liste
+      },
+      error: (err) => console.error('❌ Erreur suppression', err)
+    });
+  }
+}
 }

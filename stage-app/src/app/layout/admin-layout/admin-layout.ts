@@ -11,5 +11,9 @@ import { Footer } from '../../layout/footer/footer';
   styleUrl: './admin-layout.css',
 })
 export class AdminLayout {
+  onActivate(): void {
+    // ✅ Scroll vers le haut à chaque changement de page
+    window.scrollTo(0, 0);
+  }
 
 }

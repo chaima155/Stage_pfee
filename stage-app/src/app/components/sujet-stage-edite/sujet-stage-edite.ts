@@ -1,26 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SujetStageService } from '../../services/sujet-stage';
 import { SujetStage } from '../../model/sujet-stage';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sujet-stage-edite',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule], // ✅ Ajouter CommonModule et FormsModule
   templateUrl: './sujet-stage-edite.html',
   styleUrls: ['./sujet-stage-edite.css'],
 })
-export class SujetStageEdite {
-   sujet: SujetStage = {
+export class SujetStageEdite implements OnInit {
+  sujet: SujetStage = {
     id: 0,
     titre: '',
     description: '',
     motsCles: '',
-    nbrStagiaires: 0,
+    nbrStagiaires: 1,
     niveau: '',
-    duree: 0,
+    duree: 6,
     technologies: '',
-    dateposte: ''
   };
+
+  submitAttempted: boolean = false;
+  showSuccessMessage: boolean = false;
 
   constructor(
     private sujetService: SujetStageService,
@@ -29,29 +34,47 @@ export class SujetStageEdite {
   ) {}
 
   ngOnInit(): void {
-    // Récupérer l'id depuis l'URL
+    // ✅ Récupérer l'id depuis l'URL
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.sujet.id = id;
 
-    // Charger les données actuelles pour pré-remplir le formulaire
-    
-  }
-
-  // Formater la date pour l'input type="date" (string YYYY-MM-DD)
-  private formatDate(date: string | Date): string {
-    const d = new Date(date);
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);
-    const day = ('0' + d.getDate()).slice(-2);
-    return `${d.getFullYear()}-${month}-${day}`;
+    // ✅ Charger les données actuelles pour pré-remplir le formulaire
+    this.sujetService.getSujetById(id).subscribe({
+      next: (data) => {
+        this.sujet = data;
+        console.log('✅ Sujet chargé:', data);
+      },
+      error: (err) => console.error('❌ Erreur chargement sujet', err)
+    });
   }
 
   updateSujet(): void {
+    this.submitAttempted = true;
+
+    if (!this.sujet.titre || !this.sujet.description) {
+      console.warn('Champs obligatoires manquants');
+      return;
+    }
+
     this.sujetService.updateSujet(this.sujet.id!, this.sujet).subscribe({
-      next: (res) => {
-        console.log('Mise à jour réussie', res);
-        this.router.navigate(['/sujets']); // retour à la liste après update
+      next: () => {
+        console.log('✅ Mise à jour réussie');
+        // ✅ Navigation correcte vers la liste
+        this.router.navigate(['/dashbord/list']);
       },
-      error: (err) => console.error('Erreur mise à jour', err)
+      error: (err) => console.error('❌ Erreur mise à jour', err)
     });
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    if (!this.submitAttempted) return false;
+    switch (fieldName) {
+      case 'titre': return !this.sujet.titre;
+      case 'description': return !this.sujet.description;
+      default: return false;
+    }
+  }
+
+  cancelEdit(): void {
+    this.router.navigate(['/dashbord/list']);
   }
 }

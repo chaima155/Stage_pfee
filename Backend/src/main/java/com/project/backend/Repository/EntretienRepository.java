@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntretienRepository extends JpaRepository<Entretien,Long> {
+    void deleteBySujetStageId(Long sujetStageId);
 }

@@ -1,18 +1,20 @@
 
 .main-content {
+    position: relative;
     margin-left: 260px;        /* Largeur de la sidebar */
     margin-top: 70px;          /* Hauteur du header */
     margin-bottom: 60px;       /* Hauteur du footer */
     min-height: calc(100vh - 130px);
     background: #f8f9fc;
     padding: 0;
+    z-index: 1;
 }
 
 .content-wrapper {
   max-width: 1700px;
   margin: 0 auto;
   padding: 25px 30px;
-  width: 1000px;
+  width: 100%;
   box-sizing: border-box;
 }
 

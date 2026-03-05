@@ -8,4 +8,5 @@ export class SujetStage {
   duree!: number;
   technologies!: string;
   dateposte?: string;
+  entretien?: { id: number; date: string }[];
 }
