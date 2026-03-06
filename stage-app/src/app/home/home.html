@@ -56,40 +56,21 @@
   <h2 >Avis des étudiants</h2>
 
   <!-- Slider container -->
-  <div class="slider" style="--width: 250px; --height: 250px; --quantity: 5;">
-    <div class="list">
-      <div class="item" style="--position: 1">
-        <div class="card" style="background: linear-gradient(to right, #ff7e5f, #feb47b)">
-          <p>“Grâce à StageManager, j’ai trouvé mon stage rapidement et facilement.”</p>
-          <p class="student-name">— Ahmed, Étudiant IT</p>
+<div class="slider" style="--width: 250px; --height: 250px;" [style.--quantity]="avisList.length">
+  <div class="list">
+    <div class="item" *ngFor="let avis of avisList; let i = index" [style.--position]="i + 1">
+      <div class="card" [style.background]="avis.gradient">
+        <div class="avis-stars-display">
+          <i class="fa-solid fa-star" *ngFor="let s of [].constructor(avis.rating)"></i>
+          <i class="fa-regular fa-star" *ngFor="let s of [].constructor(5 - avis.rating)"></i>
         </div>
-      </div>
-      <div class="item" style="--position: 2">
-        <div class="card" style="background: linear-gradient(to right, #6a11cb, #2575fc)">
-          <p>“Une plateforme claire, simple et très pratique pour suivre mon PFE.”</p>
-          <p class="student-name">— Sara, Étudiante Génie Logiciel</p>
-        </div>
-      </div>
-      <div class="item" style="--position: 3">
-        <div class="card" style="background: linear-gradient(to right, #00c6ff, #0072ff)">
-          <p>“Le suivi avec mon encadrant est devenu beaucoup plus organisé.”</p>
-          <p class="student-name">— Youssef, Étudiant Réseaux</p>
-        </div>
-      </div>
-      <div class="item" style="--position: 4">
-        <div class="card" style="background: linear-gradient(to right, #ff512f, #dd2476)">
-          <p>“StageManager m’a permis de postuler et suivre mes candidatures facilement.”</p>
-          <p class="student-name">— Lina, Étudiante IT</p>
-        </div>
-      </div>
-      <div class="item" style="--position: 5">
-        <div class="card" style="background: linear-gradient(to right, #ffb6c1, #ff69b4)">
-          <p>“Une interface simple et intuitive pour gérer les stages.”</p>
-          <p class="student-name">— Karim, Étudiant Génie Logiciel</p>
-        </div>
+        <p>"{{ avis.text }}"</p>
+        <p class="student-name">— {{ avis.nom }}</p>
       </div>
     </div>
   </div>
+</div>
+  
 </section>
 
 

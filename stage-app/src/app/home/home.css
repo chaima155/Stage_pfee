@@ -11,7 +11,14 @@
   background:linear-gradient(135deg, #4a90e2 0%, #6fb1ff 100%);
   padding-bottom:40px;
 }
-
+.avis-stars-display {
+  margin-bottom: 10px;
+}
+.avis-stars-display i {
+  color: white;
+  font-size: 14px;
+  opacity: 0.9;
+}
 /* HERO */
 .hero{
   padding:80px 60px 20px; /* reduced bottom for search */
