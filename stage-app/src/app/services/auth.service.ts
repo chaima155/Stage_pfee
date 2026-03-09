@@ -9,6 +9,7 @@ import { Candidate } from '../models/candidate'; // ✅ only this import
 })
 export class AuthService {
     private apiUrl = 'http://localhost:8081/api/users';
+    private candidateApiUrl = 'http://localhost:8081/api/candidates';
     private currentUserSubject = new BehaviorSubject<Candidate | null>(null); // ✅
     public currentUser$ = this.currentUserSubject.asObservable();
     private isBrowser: boolean;
@@ -54,14 +55,14 @@ export class AuthService {
         return this.currentUserSubject.value;
     }
 
- getUserById(id: number): Observable<Candidate> {
-    return this.http.get<Candidate>(`${this.apiUrl}/${id}`); 
-}
+    getUserById(id: number): Observable<Candidate> {
+        return this.http.get<Candidate>(`${this.apiUrl}/${id}`);
+    }
 
- updateProfile(id: number, formData: FormData): Observable<Candidate> {
-    return this.http.put<Candidate>(`${this.apiUrl}/${id}/profile`, formData) // ✅ /api/candidates/{id}/profile
-        .pipe(tap(user => this.updateUserSession(user)));
-}
+    updateProfile(id: number, formData: FormData): Observable<Candidate> {
+        return this.http.put<Candidate>(`${this.candidateApiUrl}/${id}/profile`, formData)
+            .pipe(tap(user => this.updateUserSession(user)));
+    }
 
 
     updateUserSession(user: Candidate): void { // ✅

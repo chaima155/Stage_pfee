@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Candidate as UserProfile } from '../../models/candidate';
-import { take } from 'rxjs/internal/operators/take';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-my-space',
@@ -36,11 +36,12 @@ export class MySpaceComponent implements OnInit {
 
     constructor(
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private ngZone: NgZone
     ) { }
 
     ngOnInit() {
-        this.authService.currentUser$.pipe(take(1)).subscribe(user => { 
+        this.authService.currentUser$.pipe(take(1)).subscribe(user => {
             if (!user) {
                 this.router.navigate(['/login']);
                 return;
@@ -56,7 +57,7 @@ export class MySpaceComponent implements OnInit {
                     }
                 },
                 error: () => { }
-            }); 
+            });
         });
     }
 
@@ -124,7 +125,11 @@ export class MySpaceComponent implements OnInit {
             this.selectedPhoto = file;
             this.errorMessage = '';
             const reader = new FileReader();
-            reader.onload = () => { this.photoPreview = reader.result as string; };
+            reader.onload = () => {
+                this.ngZone.run(() => {
+                    this.photoPreview = reader.result as string;
+                });
+            };
             reader.readAsDataURL(file);
         }
     }
@@ -159,32 +164,41 @@ export class MySpaceComponent implements OnInit {
         this.errorMessage = '';
 
         const formData = new FormData();
-        if (this.editNom) formData.append('nom', this.editNom);
-        if (this.editPrenom) formData.append('prenom', this.editPrenom);
-        if (this.editEmail) formData.append('email', this.editEmail);
-        if (this.editTelephone) formData.append('telephone', this.editTelephone);
-        if (this.editUniversite) formData.append('universite', this.editUniversite);
-        if (this.editDiplome) formData.append('diplome', this.editDiplome);
-        if (this.editAnneeDiplome) formData.append('anneeDiplome', this.editAnneeDiplome);
-        if (this.editInformations) formData.append('informations', this.editInformations);
-        if (this.editPaysResidence) formData.append('paysResidence', this.editPaysResidence);
+        // Use fallbacks for strings if empty but present in existing user
+        formData.append('nom', this.editNom || this.user.nom || '');
+        formData.append('prenom', this.editPrenom || this.user.prenom || '');
+        formData.append('email', this.editEmail || this.user.email || '');
+        formData.append('telephone', this.editTelephone || this.user.telephone || '');
+        formData.append('universite', this.editUniversite || this.user.universite || '');
+        formData.append('diplome', this.editDiplome || this.user.diplome || '');
+        formData.append('anneeDiplome', this.editAnneeDiplome || this.user.anneeDiplome || '');
+        formData.append('informations', this.editInformations || this.user.informations || '');
+        formData.append('paysResidence', this.editPaysResidence || this.user.paysResidence || '');
+
         if (this.selectedPhoto) formData.append('photo', this.selectedPhoto);
         if (this.selectedCv) formData.append('cv', this.selectedCv);
 
         this.authService.updateProfile(this.user.id!, formData).subscribe({
             next: (updatedUser) => {
-                this.user = updatedUser;
-                this.isSaving = false;
-                this.isEditing = false;
-                this.selectedPhoto = null;
-                this.photoPreview = null;
-                this.selectedCv = null;
-                this.successMessage = 'Profil mis à jour avec succès !';
-                setTimeout(() => this.successMessage = '', 4000);
+                this.ngZone.run(() => {
+                    this.user = updatedUser;
+                    this.isSaving = false;
+                    this.isEditing = false;
+                    this.selectedPhoto = null;
+                    this.photoPreview = null;
+                    this.selectedCv = null;
+                    this.successMessage = 'Profil mis à jour avec succès !';
+
+                    setTimeout(() => {
+                        this.successMessage = '';
+                    }, 4000);
+                });
             },
             error: (err) => {
-                this.isSaving = false;
-                this.errorMessage = err.error?.message || 'Erreur lors de la mise à jour du profil';
+                this.ngZone.run(() => {
+                    this.isSaving = false;
+                    this.errorMessage = err.error?.message || 'Erreur lors de la mise à jour du profil';
+                });
             }
         });
     }
