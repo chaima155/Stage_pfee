@@ -8,6 +8,9 @@ public class Candidature {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String statut;
+    private String typeEntretien;
+    private String commentaireAI;
+    private Integer scoreAI;
 
     @ManyToOne
     @JoinColumn(name = "candidate_id")
@@ -47,5 +50,29 @@ public class Candidature {
 
     public void setSujetStage(SujetStage sujetStage) {
         this.sujetStage = sujetStage;
+    }
+
+    public String getCommentaireAI() {
+        return commentaireAI;
+    }
+
+    public void setCommentaireAI(String commentaireAI) {
+        this.commentaireAI = commentaireAI;
+    }
+
+    public Integer getScoreAI() {
+        return scoreAI;
+    }
+
+    public void setScoreAI(Integer scoreAI) {
+        this.scoreAI = scoreAI;
+    }
+
+    public String getTypeEntretien() {
+        return typeEntretien;
+    }
+
+    public void setTypeEntretien(String typeEntretien) {
+        this.typeEntretien = typeEntretien;
     }
 }
