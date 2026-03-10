@@ -1,0 +1,153 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { CandidatureService } from '../../services/candidature';
+
+@Component({
+  selector: 'app-choisir-date',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './choisir-date.html',
+  styleUrls: ['./choisir-date.css']
+})
+export class ChoisirDate implements OnInit {
+  datesDisponibles: any[] = [];
+  dateChoisie: any = null;
+  loading: boolean = true;
+  selectedDay: number | null = null;
+  selectedDayLabel: string = '';
+
+  candidateId: number = Number(localStorage.getItem('candidateId'));
+
+  // ===== Calendrier =====
+  currentMonth: number = new Date().getMonth();
+  currentYear: number = new Date().getFullYear();
+  calendarDays: (number | null)[] = [];
+
+  monthNames = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ];
+
+  constructor(
+    public router: Router,
+    private candidatureService: CandidatureService
+  ) {}
+
+  ngOnInit(): void {
+    this.candidatureService.getDatesByCandidat(this.candidateId).subscribe({
+      next: (dates: any[]) => {
+        this.datesDisponibles = dates;
+        this.loading = false;
+        this.generateCalendar();
+      },
+      error: (err: any) => {
+        console.error('Erreur:', err);
+        this.loading = false;
+        this.generateCalendar();
+      }
+    });
+  }
+
+  generateCalendar(): void {
+    const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+    const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+
+    // Lundi = 0, donc ajuster
+    let startDayOfWeek = firstDay.getDay() - 1;
+    if (startDayOfWeek < 0) startDayOfWeek = 6;
+
+    this.calendarDays = [];
+
+    // Cases vides avant le 1er
+    for (let i = 0; i < startDayOfWeek; i++) {
+      this.calendarDays.push(null);
+    }
+
+    // Jours du mois
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      this.calendarDays.push(d);
+    }
+  }
+
+  prevMonth(): void {
+    if (this.currentMonth === 0) {
+      this.currentMonth = 11;
+      this.currentYear--;
+    } else {
+      this.currentMonth--;
+    }
+    this.selectedDay = null;
+    this.generateCalendar();
+  }
+
+  nextMonth(): void {
+    if (this.currentMonth === 11) {
+      this.currentMonth = 0;
+      this.currentYear++;
+    } else {
+      this.currentMonth++;
+    }
+    this.selectedDay = null;
+    this.generateCalendar();
+  }
+
+  // ✅ Vérifier si un jour a des entretiens disponibles
+  hasEntretien(day: number | null): boolean {
+    if (!day) return false;
+    return this.datesDisponibles.some(e => {
+      const d = new Date(e.date);
+      return d.getDate() === day &&
+             d.getMonth() === this.currentMonth &&
+             d.getFullYear() === this.currentYear;
+    });
+  }
+
+  // ✅ Vérifier si c'est aujourd'hui
+  isToday(day: number | null): boolean {
+    if (!day) return false;
+    const today = new Date();
+    return day === today.getDate() &&
+           this.currentMonth === today.getMonth() &&
+           this.currentYear === today.getFullYear();
+  }
+
+  // ✅ Vérifier si c'est dans le passé
+  isPast(day: number | null): boolean {
+    if (!day) return false;
+    const today = new Date();
+    const date = new Date(this.currentYear, this.currentMonth, day);
+    return date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  }
+
+  // ✅ Sélectionner un jour
+  selectDay(day: number | null): void {
+    if (!day) return;
+    this.selectedDay = day;
+    this.selectedDayLabel = `${day} ${this.monthNames[this.currentMonth]} ${this.currentYear}`;
+  }
+
+  // ✅ Récupérer les entretiens d'un jour
+  getEntretiensForDay(day: number | null): any[] {
+    if (!day) return [];
+    return this.datesDisponibles.filter(e => {
+      const d = new Date(e.date);
+      return d.getDate() === day &&
+             d.getMonth() === this.currentMonth &&
+             d.getFullYear() === this.currentYear;
+    });
+  }
+
+  // ✅ Choisir une date → supprimer
+  choisirDate(entretien: any): void {
+    this.candidatureService.supprimerDate(entretien.id).subscribe({
+      next: () => {
+        this.datesDisponibles = this.datesDisponibles.filter(
+          (d: any) => d.id !== entretien.id
+        );
+        this.dateChoisie = entretien;
+      },
+      error: (err: any) => console.error('Erreur:', err)
+    });
+  }
+}

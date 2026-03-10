@@ -4,7 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';  // ✅ Ajouter
 import { EntretienService } from '../../services/entretien';
 import { SujetStageService } from '../../services/sujet-stage';
-import { SujetStage } from '../../model/sujet-stage';
+import { SujetStage } from '../../models/sujet-stage';
 
 @Component({
   selector: 'app-entretien-create',

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { SujetStage } from '../model/sujet-stage';
+import { SujetStage } from '../models/sujet-stage';
 
 
 @Injectable({

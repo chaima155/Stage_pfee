@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { SujetStageService } from '../../services/sujet-stage';
-import { SujetStage } from '../../model/sujet-stage';
+import { SujetStage } from '../../models/sujet-stage';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

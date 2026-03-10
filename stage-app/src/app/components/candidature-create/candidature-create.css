@@ -1,0 +1,228 @@
+.candidature-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.sujet-desc {
+  color: #6c757d;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.mots-cles {
+  background: #e8f0fe;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  color: #4e73df;
+  font-size: 14px;
+}
+
+/* ===== FORMULAIRE ===== */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #34495e;
+  font-size: 14px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.3s;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+}
+
+/* ===== CV INFO ===== */
+.cv-info {
+  background: #d4edda;
+  color: #155724;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #c3e6cb;
+}
+
+/* ===== BOUTON POSTULER ===== */
+.btn-postuler {
+  background: #4e73df;
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.btn-postuler:hover {
+  background: #224abe;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 115, 223, 0.4);
+}
+
+.btn-postuler:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== RÉSULTAT VALIDÉ ===== */
+.result-success {
+  background: #d4edda;
+  border: 2px solid #28a745;
+  border-radius: 12px;
+  padding: 25px;
+  color: #155724;
+  animation: fadeIn 0.5s ease;
+}
+
+.result-success h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+/* ===== RÉSULTAT REFUSÉ ===== */
+.result-error {
+  background: #f8d7da;
+  border: 2px solid #dc3545;
+  border-radius: 12px;
+  padding: 25px;
+  color: #721c24;
+  animation: fadeIn 0.5s ease;
+}
+
+.result-error h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+/* ===== SCORE ===== */
+.score {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+/* ===== TAGS ===== */
+.tags {
+  margin: 15px 0;
+}
+
+.tags p {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.tag-found {
+  background: #28a745;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  margin: 3px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.tag-missing {
+  background: #dc3545;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  margin: 3px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+/* ===== INFO ===== */
+.info {
+  margin-top: 15px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ===== BOUTONS RÉSULTAT ===== */
+.btn-retry {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-retry:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+.btn-home {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-home:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .candidature-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  h2 { font-size: 20px; }
+  .btn-postuler { font-size: 14px; }
+}

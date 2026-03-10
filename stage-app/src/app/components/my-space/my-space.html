@@ -1,0 +1,225 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link
+  href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+  rel="stylesheet">
+
+<div class="myspace-container" *ngIf="!isLoading">
+
+  <!-- Success notification -->
+  <div class="notification success" *ngIf="successMessage">
+    <i class="fa-solid fa-circle-check"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- ===== VIEW MODE ===== -->
+  <div class="profile-layout" *ngIf="!isEditing">
+
+    <!-- LEFT: Avatar Card -->
+    <div class="profile-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-cover"></div>
+        <div class="sidebar-body">
+          <div class="avatar-wrapper">
+            <div class="avatar" *ngIf="hasPhoto()">
+              <img [src]="getPhotoUrl()" alt="Photo de profil" />
+            </div>
+            <div class="avatar avatar-initials" *ngIf="!hasPhoto()">
+              {{ getInitials() }}
+            </div>
+            <span class="status-dot"></span>
+          </div>
+          <h2 class="user-name">{{ user?.prenom }} {{ user?.nom }}</h2>
+          <span class="role-badge">
+            <i class="fa-solid fa-shield-halved"></i>
+            {{ getRoleBadge() }}
+          </span>
+          <button class="btn-edit" (click)="startEditing()">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Modifier mon profil
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info Card -->
+    <div class="profile-main">
+      <div class="info-card">
+        <div class="info-card-header">
+          <h3><i class="fa-solid fa-id-card"></i> Informations personnelles</h3>
+        </div>
+        <div class="info-card-body">
+
+          <div class="info-row">
+            <div class="info-icon-wrap"><i class="fa-solid fa-envelope"></i></div>
+            <div class="info-text">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ user?.email }}</span>
+            </div>
+          </div>
+
+          <div class="info-row" *ngIf="user?.prenom">
+            <div class="info-icon-wrap"><i class="fa-solid fa-user"></i></div>
+            <div class="info-text">
+              <span class="info-label">Prénom</span>
+              <span class="info-value">{{ user?.prenom }}</span>
+            </div>
+          </div>
+
+          <div class="info-row" *ngIf="user?.nom">
+            <div class="info-icon-wrap"><i class="fa-solid fa-user"></i></div>
+            <div class="info-text">
+              <span class="info-label">Nom</span>
+              <span class="info-value">{{ user?.nom }}</span>
+            </div>
+          </div>
+
+          <div class="info-row" *ngIf="user?.sexes">
+            <div class="info-icon-wrap"><i class="fa-solid fa-venus-mars"></i></div>
+            <div class="info-text">
+              <span class="info-label">Sexe</span>
+              <span class="info-value">{{ user?.sexes }}</span>
+            </div>
+          </div>
+
+          <!-- CV Section -->
+          <div class="cv-section">
+            <div class="cv-header-row">
+              <div class="cv-header-left">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Curriculum Vitae</span>
+              </div>
+            </div>
+            <div class="cv-status" *ngIf="user?.CV">
+              <div class="cv-file-info">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>CV disponible</span>
+              </div>
+              <a [href]="getCvUrl()" target="_blank" class="btn-cv-view">
+                <i class="fa-solid fa-eye"></i> Voir le CV
+              </a>
+            </div>
+            <div class="cv-empty" *ngIf="!user?.CV">
+              <i class="fa-solid fa-file-circle-xmark"></i>
+              <span>Aucun CV téléchargé</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT MODE ===== -->
+  <div class="edit-layout" *ngIf="isEditing">
+    <div class="edit-card">
+      <div class="edit-header">
+        <div class="edit-title">
+          <i class="fa-solid fa-user-pen"></i>
+          <h2>Modifier mon profil</h2>
+        </div>
+        <button class="btn-close" (click)="cancelEditing()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="edit-body">
+
+        <!-- Photo Upload -->
+        <div class="section-block">
+          <div class="section-title"><i class="fa-solid fa-camera"></i> Photo de profil</div>
+          <div class="photo-upload-section">
+            <div class="avatar-edit" *ngIf="photoPreview">
+              <img [src]="photoPreview" alt="Nouvelle photo" />
+            </div>
+            <div class="avatar-edit" *ngIf="!photoPreview && hasPhoto()">
+              <img [src]="getPhotoUrl()" alt="Photo actuelle" />
+            </div>
+            <div class="avatar-edit avatar-initials" *ngIf="!photoPreview && !hasPhoto()">
+              {{ getInitials() }}
+            </div>
+            <div class="upload-actions">
+              <label for="photo-input" class="btn-upload">
+                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                Changer la photo
+              </label>
+              <input type="file" id="photo-input" accept="image/jpeg,image/png,image/gif,image/webp"
+                (change)="onPhotoSelected($event)" style="display: none;" />
+              <p class="hint">JPG, PNG, GIF ou WEBP · Max 5 Mo</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="section-block">
+          <div class="section-title"><i class="fa-solid fa-circle-user"></i> Informations personnelles</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-prenom">Prénom</label>
+              <input type="text" id="edit-prenom" [(ngModel)]="editPrenom" placeholder="Votre prénom" />
+            </div>
+            <div class="form-group">
+              <label for="edit-nom">Nom</label>
+              <input type="text" id="edit-nom" [(ngModel)]="editNom" placeholder="Votre nom" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="edit-email">Email</label>
+            <input type="email" id="edit-email" [(ngModel)]="editEmail" placeholder="votre@email.com" />
+          </div>
+        </div>
+
+        <!-- CV Upload -->
+        <div class="section-block">
+          <div class="section-title"><i class="fa-solid fa-file-pdf"></i> Curriculum Vitae</div>
+          <div class="cv-upload-section">
+            <div class="cv-current" *ngIf="user?.CV && !selectedCv">
+              <i class="fa-solid fa-file-lines"></i>
+              <span>CV déjà téléchargé</span>
+              <a [href]="getCvUrl()" target="_blank" class="btn-cv-view-sm">
+                <i class="fa-solid fa-eye"></i> Voir
+              </a>
+            </div>
+            <div class="cv-new-info" *ngIf="selectedCv">
+              <i class="fa-solid fa-file-circle-check"></i>
+              <span>{{ selectedCv.name }}</span>
+            </div>
+            <label for="cv-input" class="btn-upload btn-upload-cv">
+              <i class="fa-solid fa-arrow-up-from-bracket"></i>
+              {{ user?.CV ? 'Remplacer le CV' : 'Télécharger un CV' }}
+            </label>
+            <input type="file" id="cv-input" accept=".pdf,.doc,.docx" (change)="onCvSelected($event)"
+              style="display: none;" />
+            <p class="hint">PDF, DOC ou DOCX · Max 10 Mo</p>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="error-banner" *ngIf="errorMessage">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          {{ errorMessage }}
+        </div>
+
+        <!-- Actions -->
+        <div class="edit-actions">
+          <button class="btn-cancel-edit" (click)="cancelEditing()">
+            <i class="fa-solid fa-xmark"></i> Annuler
+          </button>
+          <button class="btn-save" (click)="saveProfile()" [disabled]="isSaving">
+            <i class="fa-solid fa-check" *ngIf="!isSaving"></i>
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="isSaving"></i>
+            {{ isSaving ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-container" *ngIf="isLoading">
+  <div class="loading-spinner">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <p>Chargement...</p>
+  </div>
+</div>

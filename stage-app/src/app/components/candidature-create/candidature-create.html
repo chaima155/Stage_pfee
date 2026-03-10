@@ -1,0 +1,58 @@
+<div class="candidature-container">
+  <h2>📝 Postuler pour : {{ sujet?.titre }}</h2>
+  <p class="sujet-desc">{{ sujet?.description }}</p>
+  <div class="mots-cles">
+    🔑 Mots clés requis : <strong>{{ sujet?.motsCles }}</strong>
+  </div>
+
+  <div class="form-section" *ngIf="!submitted">
+
+    <!-- Type entretien -->
+    <div class="form-group">
+      <label>Type d'entretien</label>
+      <select [(ngModel)]="typeEntretien" class="form-control">
+        <option value="" disabled>-- Choisir --</option>
+        <option value="presentiel">🏢 Présentiel</option>
+        <option value="enligne">🎥 En ligne (Vidéo)</option>
+      </select>
+    </div>
+
+    <!-- ✅ Info CV déjà uploadé -->
+    <div class="cv-info">
+      ✅ Votre CV enregistré dans votre profil sera analysé automatiquement.
+    </div>
+
+    <button
+      class="btn-postuler"
+      (click)="postuler()"
+      [disabled]="!typeEntretien || loading">
+      {{ loading ? '⏳ Analyse CV en cours...' : '🚀 Envoyer ma candidature' }}
+    </button>
+
+  </div>
+
+  <!-- Résultat AI -->
+  <div *ngIf="analysisResult" class="result-section">
+    <div *ngIf="analysisResult.valide" class="result-success">
+      <h3>✅ Candidature Acceptée !</h3>
+      <p class="score">Score : <strong>{{ analysisResult.score }}/100</strong></p>
+      <p>{{ analysisResult.commentaire }}</p>
+      <button class="btn-home" (click)="router.navigate(['/my-space'])">
+        → Aller à Mon Espace
+      </button>
+    </div>
+
+    <div *ngIf="!analysisResult.valide" class="result-error">
+      <h3>❌ Candidature Refusée</h3>
+      <p class="score">Score : <strong>{{ analysisResult.score }}/100</strong></p>
+      <p>{{ analysisResult.commentaire }}</p>
+      <div class="tags">
+        <p>✘ Mots clés manquants :</p>
+        <span class="tag-missing" *ngFor="let m of analysisResult.motsClesManquants">{{ m }}</span>
+      </div>
+      <button class="btn-retry" (click)="submitted = false; analysisResult = null">
+        🔄 Réessayer avec un autre CV dans votre profil
+      </button>
+    </div>
+  </div>
+</div>

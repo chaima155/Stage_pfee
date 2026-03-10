@@ -1,0 +1,64 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<header class="header">
+  <a routerLink="/home" class="logo">
+    StageManager
+  </a>
+
+  <nav class="nav">
+    <ul>
+      <li>
+        <a routerLink="/my-space" routerLinkActive="active">
+          <i class="fa-solid fa-house"></i> Mon espace
+        </a>
+      </li>
+      <li>
+        <a routerLink="/stages" routerLinkActive="active">
+          <i class="fa-solid fa-file-lines"></i> Stages
+        </a>
+      </li>
+      <li>
+        <a routerLink="/contact" routerLinkActive="active">
+        <i class="fa-solid fa-address-book"></i> Informations</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- NOT logged in -->
+  <div class="header-actions" *ngIf="!isLoggedIn()">
+    <a routerLink="/register-candidate" class="btn-auth">
+      <i class="fa-solid fa-user-plus"></i> S'inscrire
+    </a>
+    <a routerLink="/login" class="btn-auth">
+      <i class="fa-solid fa-right-to-bracket"></i> Se connecter
+    </a>
+  </div>
+
+  <!-- ✅ Logged in: wrapped in *ngIf -->
+  <div class="header-actions header-user" *ngIf="isLoggedIn()">
+    <a routerLink="/my-space" class="user-profile-link">
+      <div class="header-avatar" *ngIf="hasPhoto()">
+        <img [src]="getPhotoUrl()" alt="Photo de profil" />
+      </div>
+      <div class="header-avatar header-avatar-initials" *ngIf="!hasPhoto()">
+        {{ getInitials() }}
+      </div>
+      <span class="header-username">{{ currentUser?.prenom }}</span>
+    </a>
+    <button class="btn btn-logout" (click)="openLogoutModal()">
+      <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+    </button>
+  </div>
+
+</header>
+
+<!-- Modal OUTSIDE <header> -->
+<div class="logout-modal-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
+  <div class="logout-modal" (click)="$event.stopPropagation()">
+    <p>Tu es sûr(e) de vouloir te déconnecter ?</p>
+    <div class="logout-modal-actions">
+      <button class="btn-confirm" (click)="confirmLogout()">Oui</button>
+      <button class="btn-cancel" (click)="closeLogoutModal()">Non</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,192 @@
+<div class="candidate-form-container">
+    <div class="form-wrapper">
+        <h2>Postuler pour un stage</h2>
+        <p class="subtitle">Remplissez le formulaire ci-dessous pour nous rejoindre.</p>
+
+        <div *ngIf="successMessage" class="alert success-alert">
+            <i class="fa-solid fa-circle-check"></i> {{ successMessage }}
+        </div>
+
+        <div *ngIf="errorMessage" class="alert error-alert">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+        </div>
+
+        <form [formGroup]="candidateForm" (ngSubmit)="onSubmit()" class="modern-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nom">Nom *</label>
+                    <input type="text" id="nom" formControlName="nom" placeholder="Votre nom"
+                        [class.invalid]="candidateForm.get('nom')?.invalid && candidateForm.get('nom')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('nom')?.invalid && candidateForm.get('nom')?.touched">
+                        Le nom est requis.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prenom">Prénom *</label>
+                    <input type="text" id="prenom" formControlName="prenom" placeholder="Votre prénom"
+                        [class.invalid]="candidateForm.get('prenom')?.invalid && candidateForm.get('prenom')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('prenom')?.invalid && candidateForm.get('prenom')?.touched">
+                        Le prénom est requis.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" formControlName="email" placeholder="Votre email"
+                        [class.invalid]="candidateForm.get('email')?.invalid && candidateForm.get('email')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('email')?.invalid && candidateForm.get('email')?.touched">
+                        <span *ngIf="candidateForm.get('email')?.errors?.['required']">L'email est requis.</span>
+                        <span *ngIf="candidateForm.get('email')?.errors?.['email']">Format d'email invalide.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="motDePasse">Mot de passe *</label>
+                    <input type="password" id="motDePasse" formControlName="motDePasse" placeholder="Votre mot de passe"
+                        [class.invalid]="candidateForm.get('motDePasse')?.invalid && candidateForm.get('motDePasse')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('motDePasse')?.invalid && candidateForm.get('motDePasse')?.touched">
+                        Le mot de passe est requis.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sexes">Sexe *</label>
+                    <select id="sexes" formControlName="sexes"
+                        [class.invalid]="candidateForm.get('sexes')?.invalid && candidateForm.get('sexes')?.touched">
+                        <option value="">Sélectionnez</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                    </select>
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('sexes')?.invalid && candidateForm.get('sexes')?.touched">
+                        Le sexe est requis.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateNaissance">Date de naissance *</label>
+                    <input type="date" id="dateNaissance" formControlName="dateNaissance"
+                        [class.invalid]="candidateForm.get('dateNaissance')?.invalid && candidateForm.get('dateNaissance')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('dateNaissance')?.invalid && candidateForm.get('dateNaissance')?.touched">
+                        La date de naissance est requise.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="telephone">Téléphone *</label>
+                    <input type="tel" id="telephone" formControlName="telephone" placeholder="Ex: 0612345678"
+                        [class.invalid]="candidateForm.get('telephone')?.invalid && candidateForm.get('telephone')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('telephone')?.invalid && candidateForm.get('telephone')?.touched">
+                        <span *ngIf="candidateForm.get('telephone')?.errors?.['required']">Le téléphone est
+                            requis.</span>
+                        <span *ngIf="candidateForm.get('telephone')?.errors?.['pattern']">Le format du téléphone n'est
+                            pas valide.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paysResidence">Pays de résidence *</label>
+                    <input type="text" id="paysResidence" formControlName="paysResidence" placeholder="Ex: Maroc"
+                        [class.invalid]="candidateForm.get('paysResidence')?.invalid && candidateForm.get('paysResidence')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('paysResidence')?.invalid && candidateForm.get('paysResidence')?.touched">
+                        Le pays de résidence est requis.
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+            <h3>Formation</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="universite">Université / École *</label>
+                    <input type="text" id="universite" formControlName="universite" placeholder="Nom de l'établissement"
+                        [class.invalid]="candidateForm.get('universite')?.invalid && candidateForm.get('universite')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('universite')?.invalid && candidateForm.get('universite')?.touched">
+                        L'université est requise.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="diplome">Diplôme préparé *</label>
+                    <input type="text" id="diplome" formControlName="diplome" placeholder="Ex: Ingénierie Informatique"
+                        [class.invalid]="candidateForm.get('diplome')?.invalid && candidateForm.get('diplome')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('diplome')?.invalid && candidateForm.get('diplome')?.touched">
+                        Le diplôme est requis.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="anneeDiplome">Année d'obtention *</label>
+                    <input type="text" id="anneeDiplome" formControlName="anneeDiplome" placeholder="Ex: 2025"
+                        [class.invalid]="candidateForm.get('anneeDiplome')?.invalid && candidateForm.get('anneeDiplome')?.touched">
+                    <div class="error-text"
+                        *ngIf="candidateForm.get('anneeDiplome')?.invalid && candidateForm.get('anneeDiplome')?.touched">
+                        L'année d'obtention est requise.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <!-- Placeholder for visual balance -->
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="informations">Informations complémentaires</label>
+                <textarea id="informations" formControlName="informations" rows="4"
+                    placeholder="Parlez-nous un peu de vous, vos motivations..."></textarea>
+            </div>
+<div class="form-group full-width">
+    <label>CV / Portfolio <span class="label-hint">(PDF, DOC, DOCX)</span></label>
+    <div class="file-upload-wrapper" [class.has-file]="selectedFile">
+        <input
+            type="file"
+            id="cv"
+            (change)="onFileSelected($event)"
+            accept=".pdf,.doc,.docx"
+            class="file-input-hidden"
+        />
+        <label for="cv" class="file-upload-label">
+            <ng-container *ngIf="!selectedFile">
+                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                <div class="upload-text">
+                    <span class="upload-title">Glissez votre fichier ici ou <strong>parcourir</strong></span>
+                    <span class="upload-subtitle">PDF, DOC, DOCX — max 5MB</span>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="selectedFile">
+                <i class="fa-solid fa-file-check file-icon"></i>
+                <div class="upload-text">
+                    <span class="file-name">{{ selectedFile.name }}</span>
+                    <span class="change-file">Cliquer pour changer</span>
+                </div>
+            </ng-container>
+        </label>
+    </div>
+</div>
+            <div class="form-actions">
+<button type="button" class="btn-submit" [disabled]="isSubmitting" (click)="onSubmit()">                <span *ngIf="!isSubmitting">Soumettre ma candidature</span>
+                <span *ngIf="isSubmitting"><i class="fa-solid fa-spinner fa-spin"></i> Envoi en cours...</span>
+            </button>
+            </div>
+        </form>
+    </div>
+</div>

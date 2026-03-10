@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { SujetStageService } from '../../services/sujet-stage';
-import { SujetStage } from '../../model/sujet-stage';
+import { SujetStage } from '../../models/sujet-stage';
 
 @Component({
   selector: 'app-sujet-stage-create',
