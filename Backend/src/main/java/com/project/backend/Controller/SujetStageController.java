@@ -1,4 +1,4 @@
-package com.project.backend.controller;
+package com.project.backend.Controller;
 
 import com.project.backend.Repository.SujetStageRepository;
 import com.project.backend.model.SujetStage;

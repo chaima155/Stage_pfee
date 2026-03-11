@@ -1,5 +1,7 @@
 package com.project.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -12,13 +14,29 @@ import java.util.List;
 @DiscriminatorValue("candidate")
 public class Candidate extends User {
 
+    @JsonProperty("universite")
     private String universite;
+
+    @JsonProperty("diplome")
     private String diplome;
+
+    @JsonProperty("anneeDiplome")
     private String anneeDiplome;
+
+    @JsonProperty("informations")
     private String informations;
+
+    @JsonProperty("dateNaissance")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dateNaissance;
+
+    @JsonProperty("telephone")
     private String telephone;
+
+    @JsonProperty("paysResidence")
     private String paysResidence;
+
+    @JsonProperty("CV")
     private String CV;
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
     private List<Candidature> candidatures;

@@ -1,5 +1,6 @@
 package com.project.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +19,7 @@ public class Candidature {
 
     @ManyToOne
     @JoinColumn(name = "sujet_id")
+    @JsonBackReference
     private SujetStage sujetStage;
 
     public Long getId() {

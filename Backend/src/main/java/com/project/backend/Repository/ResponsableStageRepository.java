@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ResponsableStageRepository extends JpaRepository<ResponsableStage,Long> {
+    ResponsableStage findByEmail(String email);
 }

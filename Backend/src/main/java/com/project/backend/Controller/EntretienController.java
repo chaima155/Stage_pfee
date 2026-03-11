@@ -1,4 +1,4 @@
-package com.project.backend.controller;
+package com.project.backend.Controller;
 
 import com.project.backend.Repository.EntretienRepository;
 import com.project.backend.model.Entretien;
@@ -52,10 +52,15 @@ public class EntretienController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }}
-    @DeleteMapping("/{id}")
-    public String deleteEntretien(@PathVariable Long id) {
-        entretienRepository.deleteById(id);
-        return "date de l'entretien supprimé avec succès";
+    @DeleteMapping("/{id}/choisir")
+    public ResponseEntity<?> choisirDate(@PathVariable Long id) {
+        try {
+            entretienRepository.deleteById(id);
+            return ResponseEntity.ok("Date supprimée avec succès");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur: " + e.getMessage());
+        }
     }
 
 }

@@ -27,7 +27,7 @@ public class SujetStage {
     private List<Entretien> entretien;
 
     @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @JsonManagedReference
     private List<Candidature> candidatures;
 
     @PrePersist

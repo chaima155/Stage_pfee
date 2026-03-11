@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -19,14 +20,18 @@ public class AiService {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public Map<String, Object> analyserCV(
-            MultipartFile cvFile,
+            String cvPath,        // ✅ String chemin du fichier
             String titreSujet,
             String descriptionSujet,
             String motsCles
     ) {
         try {
-            String base64CV = Base64.getEncoder().encodeToString(cvFile.getBytes());
-            String mediaType = cvFile.getContentType();
+            // ✅ Lire le fichier depuis le chemin
+            byte[] cvBytes = Files.readAllBytes(Paths.get(cvPath));
+            String base64CV = Base64.getEncoder().encodeToString(cvBytes);
+
+            // ✅ Media type toujours PDF
+            String mediaType = "application/pdf";
 
             String prompt = String.format("""
                 Tu es un système automatique de filtrage de CV. Tu dois être TRÈS STRICT.
