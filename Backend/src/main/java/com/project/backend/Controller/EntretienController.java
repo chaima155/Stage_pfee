@@ -21,10 +21,10 @@ public class EntretienController {
     }
 
     @PostMapping
-    public ResponseEntity<Entretien> create(@Valid @RequestBody Entretien entretien) {
-        Entretien savedentretien = entretienRepository.save(entretien);
-        return new ResponseEntity<>(savedentretien, HttpStatus.CREATED);
-
+    public ResponseEntity<Entretien> create(@RequestBody Entretien entretien) {
+        // ✅ Plus de sujetStage
+        Entretien saved = entretienRepository.save(entretien);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
     @GetMapping
     public List<Entretien> getAllEntretien() {
@@ -37,23 +37,25 @@ public class EntretienController {
                 .orElseThrow(() -> new RuntimeException("entretien non trouvé"));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Entretien> updateEntretien(@PathVariable Long id, @RequestBody Entretien entretien) {
-        Optional<Entretien> entretiens = entretienRepository.findById(id);
-
-        if (entretiens.isPresent()) {
-            Entretien existingEntretien = entretiens.get();
-            existingEntretien.setDate(entretien.getDate());
-
-            Entretien updateEntretien = entretienRepository.save(existingEntretien);
-
-            return new ResponseEntity<>(updateEntretien, HttpStatus.OK);
-
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }}
-    @DeleteMapping("/{id}/choisir")
+    @PutMapping("/{id}/choisir")
     public ResponseEntity<?> choisirDate(@PathVariable Long id) {
+        return entretienRepository.findById(id)
+                .map(entretien -> {
+                    entretien.setDisponible(false); // ✅ Non disponible
+                    entretienRepository.save(entretien);
+                    return ResponseEntity.ok(entretien);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<Entretien>> getDisponibles() {
+        return ResponseEntity.ok(
+                entretienRepository.findByDisponibleTrue()
+        );
+    }
+    @DeleteMapping("/{id}/choisir")
+    public ResponseEntity<?> deleteDate(@PathVariable Long id) {
         try {
             entretienRepository.deleteById(id);
             return ResponseEntity.ok("Date supprimée avec succès");

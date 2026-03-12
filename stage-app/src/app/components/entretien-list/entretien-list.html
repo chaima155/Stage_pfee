@@ -1,0 +1,28 @@
+<table *ngIf="!loading && entretiens.length > 0" class="entretien-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>📅 Date</th>
+      <th>🕐 Heure</th>
+      <th>📌 Statut</th>  <!-- ✅ Ajouter -->
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let e of entretiens; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ e.date | date:'dd/MM/yyyy' }}</td>
+      <td>{{ e.date | date:'HH:mm' }}</td>
+      <td>
+        <!-- ✅ Badge statut -->
+        <span class="badge-disponible" *ngIf="e.disponible">✅ Disponible</span>
+        <span class="badge-indisponible" *ngIf="!e.disponible">❌ Non disponible</span>
+      </td>
+      <td class="actions">
+        <button class="btn-delete" (click)="deleteEntretien(e.id)">
+          🗑 Supprimer
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

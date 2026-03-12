@@ -112,22 +112,15 @@ public class CandidatureController {
     @GetMapping("/candidate/{candidateId}/dates")
     public ResponseEntity<?> getDatesByCandidateAccepte(@PathVariable Long candidateId) {
         try {
-            List<Candidature> candidatures = candidatureRepository
-                    .findByCandidate_IdAndStatut(candidateId, "VALIDEE");
+            // ✅ Retourner tous les entretiens disponibles
+            List<Entretien> entretiens = entretienRepository.findByDisponibleTrue();
 
             List<Map<String, Object>> dates = new ArrayList<>();
-            for (Candidature c : candidatures) {
-                // ✅ entretienRepository (minuscule) pas EntretienRepository
-                List<Entretien> entretiens = entretienRepository
-                        .findBySujetStageId(c.getSujetStage().getId());
-                for (Entretien e : entretiens) {
-                    Map<String, Object> dateInfo = new HashMap<>();
-                    dateInfo.put("id", e.getId());
-                    dateInfo.put("date", e.getDate());
-                    dateInfo.put("sujetTitre", c.getSujetStage().getTitre());
-                    dateInfo.put("sujetId", c.getSujetStage().getId());
-                    dates.add(dateInfo);
-                }
+            for (Entretien e : entretiens) {
+                Map<String, Object> dateInfo = new HashMap<>();
+                dateInfo.put("id", e.getId());
+                dateInfo.put("date", e.getDate());
+                dates.add(dateInfo);
             }
             return ResponseEntity.ok(dates);
         } catch (Exception e) {

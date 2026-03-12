@@ -18,5 +18,8 @@ export class Sidebar {
   goToCreateEntretien(): void {
         this.router.navigate(['dashbord/entretien/create']);
         }
+  goToListentretien(): void {
+        this.router.navigate(['/dashbord/entretien/list']);
+        }
 
 }

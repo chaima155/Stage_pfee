@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CandidatureService } from '../../services/candidature';
+import { EntretienService } from '../../services/entretien';
 
 @Component({
   selector: 'app-choisir-date',
@@ -19,7 +20,6 @@ export class ChoisirDate implements OnInit {
 
   candidateId: number = Number(localStorage.getItem('candidateId'));
 
-  // ===== Calendrier =====
   currentMonth: number = new Date().getMonth();
   currentYear: number = new Date().getFullYear();
   calendarDays: (number | null)[] = [];
@@ -31,17 +31,26 @@ export class ChoisirDate implements OnInit {
 
   constructor(
     public router: Router,
-    private candidatureService: CandidatureService
+    private candidatureService: CandidatureService,
+    private entretienService: EntretienService,
+    private cdr: ChangeDetectorRef  // ✅ Ajouter
   ) {}
 
   ngOnInit(): void {
-    this.candidatureService.getDatesByCandidat(this.candidateId).subscribe({
-      next: (dates: any[]) => {
-        this.datesDisponibles = dates;
+    this.loadDates(); // ✅ Charger les dates disponibles
+  }
+
+  // ✅ Charger seulement les entretiens disponibles
+  loadDates(): void {
+    this.loading = true;
+    this.entretienService.getEntretiensDisponibles().subscribe({
+      next: (data) => {
+        this.datesDisponibles = data; // ✅ utiliser datesDisponibles
         this.loading = false;
         this.generateCalendar();
+        this.cdr.detectChanges();
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Erreur:', err);
         this.loading = false;
         this.generateCalendar();
@@ -53,18 +62,15 @@ export class ChoisirDate implements OnInit {
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
 
-    // Lundi = 0, donc ajuster
     let startDayOfWeek = firstDay.getDay() - 1;
     if (startDayOfWeek < 0) startDayOfWeek = 6;
 
     this.calendarDays = [];
 
-    // Cases vides avant le 1er
     for (let i = 0; i < startDayOfWeek; i++) {
       this.calendarDays.push(null);
     }
 
-    // Jours du mois
     for (let d = 1; d <= lastDay.getDate(); d++) {
       this.calendarDays.push(d);
     }
@@ -92,7 +98,6 @@ export class ChoisirDate implements OnInit {
     this.generateCalendar();
   }
 
-  // ✅ Vérifier si un jour a des entretiens disponibles
   hasEntretien(day: number | null): boolean {
     if (!day) return false;
     return this.datesDisponibles.some(e => {
@@ -103,7 +108,6 @@ export class ChoisirDate implements OnInit {
     });
   }
 
-  // ✅ Vérifier si c'est aujourd'hui
   isToday(day: number | null): boolean {
     if (!day) return false;
     const today = new Date();
@@ -112,7 +116,6 @@ export class ChoisirDate implements OnInit {
            this.currentYear === today.getFullYear();
   }
 
-  // ✅ Vérifier si c'est dans le passé
   isPast(day: number | null): boolean {
     if (!day) return false;
     const today = new Date();
@@ -120,14 +123,12 @@ export class ChoisirDate implements OnInit {
     return date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
   }
 
-  // ✅ Sélectionner un jour
   selectDay(day: number | null): void {
     if (!day) return;
     this.selectedDay = day;
     this.selectedDayLabel = `${day} ${this.monthNames[this.currentMonth]} ${this.currentYear}`;
   }
 
-  // ✅ Récupérer les entretiens d'un jour
   getEntretiensForDay(day: number | null): any[] {
     if (!day) return [];
     return this.datesDisponibles.filter(e => {
@@ -138,16 +139,20 @@ export class ChoisirDate implements OnInit {
     });
   }
 
-  // ✅ Choisir une date → supprimer
-  choisirDate(entretien: any): void {
-    this.candidatureService.supprimerDate(entretien.id).subscribe({
-      next: () => {
-        this.datesDisponibles = this.datesDisponibles.filter(
-          (d: any) => d.id !== entretien.id
-        );
-        this.dateChoisie = entretien;
-      },
-      error: (err: any) => console.error('Erreur:', err)
-    });
+  // ✅ Choisir une date → marquer non disponible
+  choisirDate(entretienId: number): void {
+    if (confirm('Confirmer ce créneau ?')) {
+      this.entretienService.choisirDate(entretienId).subscribe({
+        next: () => {
+          // ✅ Retirer de la liste affichée
+          this.datesDisponibles = this.datesDisponibles.filter(e => e.id !== entretienId);
+          this.selectedDay = null;
+          this.cdr.detectChanges();
+          alert('✅ Date confirmée !');
+          this.router.navigate(['/my-space']);
+        },
+        error: (err) => console.error('Erreur:', err)
+      });
+    }
   }
 }

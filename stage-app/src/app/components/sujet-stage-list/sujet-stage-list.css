@@ -34,7 +34,7 @@
 
 /* ===== Bouton d'ajout ===== */
 .btn-add {
-  background: #4e73df;
+  background: #4a90e2;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -50,7 +50,7 @@
 }
 
 .btn-add:hover {
-  background: #224abe;
+  background: #4a90e2;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(78, 115, 223, 0.4);
 }
@@ -75,7 +75,7 @@
 }
 
 .sujet-table thead tr {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4a90e2 0%,#4a90e2 100%);
 }
 
 .sujet-table th {
@@ -109,7 +109,7 @@
 /* ===== Cellules spécifiques ===== */
 .id-cell {
   font-weight: 600;
-  color: #4e73df;
+  color: #4a90e2;
   width: 60px;
 }
 

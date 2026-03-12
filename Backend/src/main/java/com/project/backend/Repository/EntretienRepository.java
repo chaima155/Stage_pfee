@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface EntretienRepository extends JpaRepository<Entretien,Long> {
-    List<Entretien> findBySujetStageId(Long sujetStageId);
+    List<Entretien> findByDisponibleTrue();
 
-
-    void deleteBySujetStageId(Long sujetStageId);
 }

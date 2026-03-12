@@ -12,10 +12,6 @@ public class Entretien {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date date;
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "sujet_stage_id")
-    private SujetStage sujetStage;
 
     public Long getId() {
         return id;
@@ -33,11 +29,11 @@ public class Entretien {
         this.date = date;
     }
 
-    public SujetStage getSujetStage() {
-        return sujetStage;
-    }
+    @Column(nullable = false)
+    private Boolean disponible = true;
 
-    public void setSujetStage(SujetStage sujetStage) {
-        this.sujetStage = sujetStage;
-    }
+    public Boolean getDisponible() { return disponible; }
+    public void setDisponible(Boolean disponible) { this.disponible = disponible; }
+
+
 }

@@ -18,6 +18,7 @@ import { ResponsableForm } from './components/responsable-form/responsable-form'
 import { authGuard } from './components/login/auth.guard';
 import { MySpaceComponent } from './components/my-space/my-space';
 import { StageDetail } from './pages/stage-detail/stage-detail';
+import { EntretienList } from './components/entretien-list/entretien-list';
 
 
 export const routes: Routes = [
@@ -43,6 +44,8 @@ export const routes: Routes = [
       { path: 'sidebar', component: Sidebar},
       { path: 'footer', component: Footer},
       { path: 'entretien/create', component: EntretienCreate },
+      { path: 'entretien/list', component: EntretienList }
+// 
     ]
   }
 

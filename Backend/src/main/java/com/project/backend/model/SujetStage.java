@@ -22,9 +22,7 @@ public class SujetStage {
     private String technologies;
     private LocalDateTime dateposte;
 
-    @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Entretien> entretien;
+
 
     @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference
@@ -108,13 +106,7 @@ public class SujetStage {
         this.id = id;
     }
 
-    public List<Entretien> getEntretien() {
-        return entretien;
-    }
 
-    public void setEntretien(List<Entretien> entretien) {
-        this.entretien = entretien;
-    }
 
     public List<Candidature> getCandidatures() {
         return candidatures;
