@@ -39,10 +39,29 @@ export class LoginComponent {
         const { email, motDePasse } = this.loginForm.value;
 
         this.authService.login(email, motDePasse).subscribe({
-            next: () => {
-                this.isSubmitting = false;
-                this.router.navigate(['/my-space']);
-            },
+            next: (user: any) => {
+    this.isSubmitting = false;
+
+    localStorage.setItem('candidateId', user.id.toString());
+
+    const redirectSujetId = localStorage.getItem('redirectSujetId');
+
+    if (user.role === 'responsable_stage') {
+        // ✅ Responsable → Dashboard
+        this.router.navigate(['/dashbord']);
+
+    } else if (user.role === 'candidate') {
+        if (redirectSujetId) {
+            localStorage.removeItem('redirectSujetId');
+            this.router.navigate(['/candidature/create', redirectSujetId]);
+        } else {
+            // ✅ Candidat → Mon Espace
+            this.router.navigate(['/my-space']);
+        }
+    } else {
+        this.router.navigate(['/my-space']);
+    }
+},
             error: (err) => {
                 this.isSubmitting = false;
                 this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect';

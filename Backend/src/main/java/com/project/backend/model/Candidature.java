@@ -15,6 +15,7 @@ public class Candidature {
 
     @ManyToOne
     @JoinColumn(name = "candidate_id")
+    @JsonBackReference
     private Candidate candidate;
 
     @ManyToOne

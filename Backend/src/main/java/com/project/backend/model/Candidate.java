@@ -1,6 +1,7 @@
 package com.project.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
@@ -38,7 +39,9 @@ public class Candidate extends User {
 
     @JsonProperty("CV")
     private String CV;
+
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Candidature> candidatures;
 
 

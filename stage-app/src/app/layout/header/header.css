@@ -40,13 +40,13 @@
 
 .menu-toggle:hover {
   background: #f8f9fa;
-  color: #4e73df;
+  color:#4a90e2;
 }
 
 .logo h1 {
   font-size: 22px;
   font-weight: 700;
-  color: #4e73df;
+  color: #4a90e2;
   margin: 0;
   letter-spacing: 1px;
 }

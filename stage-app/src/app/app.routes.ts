@@ -17,6 +17,7 @@ import { CandidateFormComponent } from './components/candidate-form/candidate-fo
 import { ResponsableForm } from './components/responsable-form/responsable-form';
 import { authGuard } from './components/login/auth.guard';
 import { MySpaceComponent } from './components/my-space/my-space';
+import { StageDetail } from './pages/stage-detail/stage-detail';
 
 
 export const routes: Routes = [
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: '', component: Home },
   { path: 'home', component: Home },
   { path: 'stages', component: Stage },
+  { path: 'stages/:id', component: StageDetail },
   { path: 'register-candidate', component: CandidateFormComponent },
   { path: 'register-responsable', component: ResponsableForm },
   { path: 'login', component: LoginComponent },

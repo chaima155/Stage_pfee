@@ -1,47 +1,48 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SujetStageService } from '../../services/sujet-stage';
 
 @Component({
-  selector: 'app-stage',
+  selector: 'app-stage-detail',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './stage.html',
-  styleUrl: './stage.css'
+  templateUrl: './stage-detail.html',
+  styleUrl: './stage-detail.css'
 })
-export class Stage implements OnInit {
-  sujets: any[] = [];
+export class StageDetail implements OnInit {
+  sujet: any = null;
   loading = true;
 
   constructor(
-    private sujetService: SujetStageService,
+    private route: ActivatedRoute,
     public router: Router,
+    private sujetService: SujetStageService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.sujetService.getSujets().subscribe({
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.sujetService.getSujetById(id).subscribe({
       next: (data) => {
-        this.sujets = data;
+        this.sujet = data;
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur:', err);
         this.loading = false;
-        this.cdr.detectChanges();
       }
     });
   }
 
-  postuler(sujetId: number): void {
+  postuler(): void {
     const candidateId = localStorage.getItem('candidateId');
     if (!candidateId) {
-      localStorage.setItem('redirectSujetId', sujetId.toString());
+      localStorage.setItem('redirectSujetId', this.sujet.id.toString());
       this.router.navigate(['/login']);
     } else {
-      this.router.navigate(['/candidature/create', sujetId]);
+      this.router.navigate(['/candidature/create', this.sujet.id]);
     }
   }
 }

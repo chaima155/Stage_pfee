@@ -26,7 +26,7 @@ public class SujetStage {
     @JsonManagedReference
     private List<Entretien> entretien;
 
-    @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference
     private List<Candidature> candidatures;
 
