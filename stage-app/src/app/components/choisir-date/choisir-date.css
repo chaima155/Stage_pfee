@@ -193,7 +193,7 @@
 }
 
 .confirmation-card {
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, #4a90e2,#4a90e2);
   border-radius: 20px;
   padding: 40px;
   text-align: center;
@@ -222,7 +222,7 @@
 
 .btn-home {
   background: white;
-  color: #28a745;
+  color: #4a90e2;
   border: none;
   padding: 12px 30px;
   border-radius: 10px;

@@ -141,18 +141,17 @@ export class ChoisirDate implements OnInit {
 
   // ✅ Choisir une date → marquer non disponible
   choisirDate(entretienId: number): void {
-    if (confirm('Confirmer ce créneau ?')) {
-      this.entretienService.choisirDate(entretienId).subscribe({
-        next: () => {
-          // ✅ Retirer de la liste affichée
-          this.datesDisponibles = this.datesDisponibles.filter(e => e.id !== entretienId);
-          this.selectedDay = null;
-          this.cdr.detectChanges();
-          alert('✅ Date confirmée !');
-          this.router.navigate(['/my-space']);
-        },
-        error: (err) => console.error('Erreur:', err)
-      });
-    }
-  }
+  if (confirm('Confirmer ce créneau ?')) {
+    const entretien = this.datesDisponibles.find(e => e.id === entretienId);
+    this.entretienService.choisirDate(entretienId).subscribe({
+      next: () => {
+        // ✅ Retirer de la liste affichée
+        this.dateChoisie = entretien;
+        this.datesDisponibles = this.datesDisponibles.filter(e => e.id !== entretienId);
+        this.selectedDay = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erreur:', err)
+    });
+  }}
 }

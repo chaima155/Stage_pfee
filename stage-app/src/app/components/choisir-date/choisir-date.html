@@ -51,8 +51,8 @@
         <div
           *ngFor="let entretien of getEntretiensForDay(selectedDay)"
           class="slot"
-          (click)="choisirDate(entretien)">
-          🕐 {{ entretien.date | date:'HH:mm' }}
+          (click)="choisirDate(entretien.id)">
+          🕐 {{ entretien.date | date:'HH:mm': 'UTC' }}
           <span class="sujet-name">{{ entretien.sujetTitre }}</span>
         </div>
       </div>
@@ -70,7 +70,7 @@
       <h3>Entretien Confirmé !</h3>
       <p>Sujet : <strong>{{ dateChoisie.sujetTitre }}</strong></p>
       <div class="confirmed-date">
-        📅 {{ dateChoisie.date | date:'EEEE dd MMMM yyyy' }}
+        📅 {{ dateChoisie.date | date:'EEEE dd MMMM yyyy': 'UTC' }}
         à {{ dateChoisie.date | date:'HH:mm' }}
       </div>
       <button class="btn-home" (click)="router.navigate(['/my-space'])">
