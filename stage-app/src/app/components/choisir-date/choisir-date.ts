@@ -37,8 +37,28 @@ export class ChoisirDate implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadDates(); // ✅ Charger les dates disponibles
-  }
+  // ✅ Vérifier d'abord si le candidat a une candidature VALIDEE
+  this.candidatureService.getCandidaturesByCandidate(this.candidateId).subscribe({
+    next: (candidatures: any[]) => {
+      const aValide = candidatures.some(c => c.statut === 'VALIDEE');
+      
+      if (aValide) {
+        // ✅ CV accepté → charger les dates disponibles
+        this.loadDates();
+      } else {
+        // ✅ CV rejeté → pas de dates colorées
+        this.loading = false;
+        this.generateCalendar();
+        this.cdr.detectChanges();
+      }
+    },
+    error: (err) => {
+      console.error('Erreur:', err);
+      this.loading = false;
+      this.generateCalendar();
+    }
+  });
+}
 
   // ✅ Charger seulement les entretiens disponibles
   loadDates(): void {
