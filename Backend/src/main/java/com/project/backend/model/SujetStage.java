@@ -1,6 +1,5 @@
 package com.project.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ public class SujetStage {
 
 
     @OneToMany(mappedBy = "sujetStage", cascade = CascadeType.ALL, orphanRemoval = false)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Candidature> candidatures;
 
     @PrePersist

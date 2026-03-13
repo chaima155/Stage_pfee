@@ -52,7 +52,6 @@ public class SujetStageController {
             existingSujet.setNiveau(sujetStage.getNiveau());
             existingSujet.setDuree(sujetStage.getDuree());
             existingSujet.setTechnologies(sujetStage.getTechnologies());
-            existingSujet.setDateposte(sujetStage.getDateposte());
 
             SujetStage updatedSujet = sujetStageRepository.save(existingSujet);
 
