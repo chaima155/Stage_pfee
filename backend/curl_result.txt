@@ -1,0 +1,32 @@
+﻿curl.exe :   % Total    % 
+Received % Xferd  Average 
+Speed   Time    Time     
+Time  Current
+At line:1 char:1
++ curl.exe -X PUT http://loca
+lhost:8081/api/candidates/22/
+profile -F "n ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (  % Tot  
+  al    % ...  Time  Curre   
+ nt:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+                             
+    Dload  Upload   Total   
+Spent    Left  Speed
+
+  0     0    0     0    0    
+ 0      0      0 --:--:-- 
+--:--:-- --:--:--     0
+100   382    0     0  100   
+382      0   5078 --:--:-- 
+--:--:-- --:--:--  5026
+100   382    0     0  100   
+382      0   5068 --:--:-- 
+--:--:-- --:--:--  5026
