@@ -1,4 +1,5 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';  // ✅ Ajouter ChangeDetectorRef
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -37,7 +38,9 @@ export class MySpaceComponent implements OnInit {
     constructor(
         private authService: AuthService,
         private router: Router,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private cdr: ChangeDetectorRef  // ✅ Ajouter
+
     ) { }
 
     ngOnInit() {
@@ -48,12 +51,16 @@ export class MySpaceComponent implements OnInit {
             }
             this.user = user;
             this.isLoading = false;
+            this.cdr.detectChanges();  // ✅
+
 
             this.authService.getUserById(user.id!).subscribe({
                 next: (freshUser) => {
                     if (this.authService.isLoggedIn()) {
                         this.user = freshUser;
                         this.authService.updateUserSession(freshUser);
+                        this.cdr.detectChanges();  // ✅
+
                     }
                 },
                 error: () => { }
@@ -64,6 +71,7 @@ export class MySpaceComponent implements OnInit {
     getCvUrl(): string {
         return this.user?.CV ? this.authService.getCvUrl(this.user.CV) : '';
     }
+
     getPhotoUrl(): string {
         if (this.photoPreview) return this.photoPreview;
         if (this.user?.photo) return this.authService.getPhotoUrl(this.user.photo);
@@ -99,6 +107,8 @@ export class MySpaceComponent implements OnInit {
             this.errorMessage = '';
         }
         this.isEditing = true;
+        this.cdr.detectChanges();  // ✅
+
     }
 
     cancelEditing() {
@@ -107,6 +117,8 @@ export class MySpaceComponent implements OnInit {
         this.photoPreview = null;
         this.selectedCv = null;
         this.errorMessage = '';
+        this.cdr.detectChanges();  // ✅
+
     }
 
     onPhotoSelected(event: Event) {
@@ -128,6 +140,8 @@ export class MySpaceComponent implements OnInit {
             reader.onload = () => {
                 this.ngZone.run(() => {
                     this.photoPreview = reader.result as string;
+                    this.cdr.detectChanges();  // ✅
+
                 });
             };
             reader.readAsDataURL(file);
@@ -153,6 +167,8 @@ export class MySpaceComponent implements OnInit {
             }
             this.selectedCv = file;
             this.errorMessage = '';
+            this.cdr.detectChanges();  // ✅
+
         }
     }
 
@@ -164,7 +180,7 @@ export class MySpaceComponent implements OnInit {
         this.errorMessage = '';
 
         const formData = new FormData();
-        // Use fallbacks for strings if empty but present in existing user
+
         formData.append('nom', this.editNom || this.user.nom || '');
         formData.append('prenom', this.editPrenom || this.user.prenom || '');
         formData.append('email', this.editEmail || this.user.email || '');
@@ -188,9 +204,11 @@ export class MySpaceComponent implements OnInit {
                     this.photoPreview = null;
                     this.selectedCv = null;
                     this.successMessage = 'Profil mis à jour avec succès !';
-
+                    this.cdr.detectChanges();  // ✅
                     setTimeout(() => {
                         this.successMessage = '';
+                        this.cdr.detectChanges();  // ✅
+
                     }, 4000);
                 });
             },
@@ -198,12 +216,15 @@ export class MySpaceComponent implements OnInit {
                 this.ngZone.run(() => {
                     this.isSaving = false;
                     this.errorMessage = err.error?.message || 'Erreur lors de la mise à jour du profil';
+
+                    this.cdr.detectChanges();  // ✅
+
                 });
             }
         });
     }
 
-    // ✅ No 'role' in Candidate — returns fixed badge
+
     getRoleBadge(): string {
         return 'Candidat';
     }

@@ -56,7 +56,8 @@ export class AuthService {
     }
 
     getUserById(id: number): Observable<Candidate> {
-        return this.http.get<Candidate>(`${this.apiUrl}/${id}`);
+        return this.http.get<Candidate>(`${this.candidateApiUrl}/${id}`);
+
     }
 
     updateProfile(id: number, formData: FormData): Observable<Candidate> {

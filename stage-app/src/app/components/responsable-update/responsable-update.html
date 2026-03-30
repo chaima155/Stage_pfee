@@ -1,0 +1,181 @@
+<div class="responsable-update-container">
+  
+  <!-- Header -->
+  <div class="header">
+    <h1><i class="fa-solid fa-user-gear"></i> Profil</h1>
+  </div>
+
+  <!-- Photo Section -->
+  <div class="photo-section">
+    <div class="photo-container">
+      <div class="photo-upload-wrapper" (click)="photoInput.click()">
+        <img *ngIf="responsablePhoto" [src]="responsablePhoto" alt="Profile Photo" class="profile-photo" />
+        <div *ngIf="!responsablePhoto" class="photo-placeholder">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="photo-overlay">
+          <i class="fa-solid fa-camera"></i>
+          <p>Cliquez pour changer</p>
+        </div>
+        <input #photoInput type="file" id="photo-input" accept="image/*" hidden (change)="onPhotoSelected($event)" />
+      </div>
+    </div>
+    <div class="photo-info">
+      <p><strong>Changer la photo de profil</strong></p>
+      <p class="text-muted">JPG ou PNG. Max 5MB</p>
+      <div style="margin-top: 15px;">
+        <label for="file-input" style="margin-bottom: 10px; display: block;">
+          <input type="file" id="file-input" accept="image/*" (change)="onPhotoSelected($event)" />
+        </label>
+        <button *ngIf="selectedFile" (click)="uploadPhoto()" class="btn btn-primary">
+          <i class="fa-solid fa-upload"></i> Mettre à jour la photo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Info Section -->
+  <div class="info-section">
+    <h2><i class="fa-solid fa-id-card"></i> Informations Personnelles</h2>
+    
+    <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input 
+            type="text" 
+            id="nom"
+            [(ngModel)]="responsable.nom"
+            name="nom"
+            placeholder="Votre nom"
+          />
+        </div>
+        <div class="form-group">
+          <label for="prenom">Prénom</label>
+          <input 
+            type="text" 
+            id="prenom"
+            [(ngModel)]="responsable.prenom"
+            name="prenom"
+            placeholder="Votre prénom"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email"
+          [(ngModel)]="responsable.email"
+          name="email"
+          placeholder="votre@email.com"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="poste">Poste</label>
+          <input 
+            type="text" 
+            id="poste"
+            [(ngModel)]="responsable.poste"
+            name="poste"
+            placeholder="Votre poste"
+          />
+        </div>
+        <div class="form-group">
+          <label for="department">Département</label>
+          <input 
+            type="text" 
+            id="department"
+            [(ngModel)]="responsable.department"
+            name="department"
+            placeholder="Votre département"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="service">Service</label>
+        <input 
+          type="text" 
+          id="service"
+          [(ngModel)]="responsable.service"
+          name="service"
+          placeholder="Votre service"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-success btn-lg">
+        <i class="fa-solid fa-save"></i> Mettre à jour les infos
+      </button>
+    </form>
+  </div>
+
+  <!-- Password Section -->
+  <div class="password-section">
+    <h2><i class="fa-solid fa-lock"></i> Sécurité</h2>
+    
+    <form (ngSubmit)="changePassword()" #passwordForm="ngForm">
+      <div class="form-group">
+        <label for="new-password">Nouveau mot de passe</label>
+        <input 
+          type="password" 
+          id="new-password"
+          [(ngModel)]="newPassword"
+          name="newPassword"
+          placeholder="Entrez un nouveau mot de passe"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm-password">Confirmer le mot de passe</label>
+        <input 
+          type="password" 
+          id="confirm-password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Confirmez le mot de passe"
+          required
+        />
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-warning"
+        [disabled]="!newPassword || !confirmPassword || newPassword !== confirmPassword"
+      >
+        <i class="fa-solid fa-key"></i> Changer le mot de passe
+      </button>
+      
+      <p class="text-muted" *ngIf="newPassword && confirmPassword && newPassword !== confirmPassword">
+        ⚠️ Les mots de passe ne correspondent pas
+      </p>
+    </form>
+  </div>
+
+  <!-- Delete Account Section -->
+  <div class="delete-section">
+    <h2><i class="fa-solid fa-trash"></i> Zone de danger</h2>
+    <p>Une fois votre compte supprimé, il n'y a pas de retour en arrière. Soyez certain.</p>
+    <button 
+      (click)="deleteAccount()" 
+      class="btn btn-danger"
+      [disabled]="isDeleting"
+    >
+      <i class="fa-solid fa-trash-alt"></i> Supprimer mon compte
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fa-solid fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <i class="fa-solid fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+</div>

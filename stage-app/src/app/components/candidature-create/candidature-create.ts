@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';  // ✅
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,15 +20,17 @@ export class CandidatureCreate implements OnInit {
   loading: boolean = false;
   analysisResult: any = null;
   submitted: boolean = false;
+  isSubmitting: boolean = false;      // ✅ Ajouter
+  errorMessage: string = '';          // ✅ Ajouter
 
-  // ✅ Récupérer candidateId depuis localStorage directement
   candidateId: number = Number(localStorage.getItem('candidateId'));
 
   constructor(
     private route: ActivatedRoute,
     public router: Router,
     private candidatureService: CandidatureService,
-    private sujetService: SujetStageService
+    private sujetService: SujetStageService,
+    private cdr: ChangeDetectorRef    // ✅ Ajouter
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +50,9 @@ export class CandidatureCreate implements OnInit {
     }
 
     this.loading = true;
+    this.isSubmitting = true;
     this.analysisResult = null;
+    this.errorMessage = '';
 
     this.candidatureService.postuler(
       this.sujet.id,
@@ -57,12 +61,20 @@ export class CandidatureCreate implements OnInit {
     ).subscribe({
       next: (result) => {
         this.loading = false;
+        this.isSubmitting = false;
         this.analysisResult = result;
         this.submitted = true;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.loading = false;
-        console.error('Erreur candidature:', err);
+        this.isSubmitting = false;
+        if (err.status === 409) {
+          this.errorMessage = '⚠️ Vous avez déjà postulé sur ce sujet !';
+        } else {
+          this.errorMessage = err.error || 'Erreur lors de la candidature.';
+        }
+        this.cdr.detectChanges();
       }
     });
   }

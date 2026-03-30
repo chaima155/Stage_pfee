@@ -1,6 +1,7 @@
 package com.project.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,12 +11,13 @@ public class Candidature {
     private Long id;
     private String statut;
     private String typeEntretien;
+    @Column(columnDefinition = "TEXT")
     private String commentaireAI;
     private Integer scoreAI;
 
     @ManyToOne
     @JoinColumn(name = "candidate_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"candidatures", "cv", "hibernateLazyInitializer"})
     private Candidate candidate;
 
     @ManyToOne
@@ -75,7 +77,6 @@ public class Candidature {
         return typeEntretien;
     }
 
-    public void setTypeEntretien(String typeEntretien) {
-        this.typeEntretien = typeEntretien;
     }
 }
+

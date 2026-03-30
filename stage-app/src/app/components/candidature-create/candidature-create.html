@@ -21,6 +21,10 @@
     <div class="cv-info">
       ✅ Votre CV enregistré dans votre profil sera analysé automatiquement.
     </div>
+    <!-- ✅ Ajouter avant le bouton postuler -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
 
     <button
       class="btn-postuler"

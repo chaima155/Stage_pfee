@@ -45,4 +45,11 @@ export class CandidatureService {
   getAllCandidatures(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
+  planifierEntretien(candidatureId: number, date: string) {
+    return this.http.post(`http://localhost:8080/api/entretiens`, {
+      dateEntretien: date,
+      candidature: { id: candidatureId }
+    });
+  }
+
 }

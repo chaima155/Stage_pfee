@@ -19,6 +19,7 @@ export class ChoisirDate implements OnInit {
   selectedDayLabel: string = '';
 
   candidateId: number = Number(localStorage.getItem('candidateId'));
+  candidatureId: number | null = null; // ✅ ajouter
 
   currentMonth: number = new Date().getMonth();
   currentYear: number = new Date().getFullYear();
@@ -33,39 +34,38 @@ export class ChoisirDate implements OnInit {
     public router: Router,
     private candidatureService: CandidatureService,
     private entretienService: EntretienService,
-    private cdr: ChangeDetectorRef  // ✅ Ajouter
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-  // ✅ Vérifier d'abord si le candidat a une candidature VALIDEE
-  this.candidatureService.getCandidaturesByCandidate(this.candidateId).subscribe({
-    next: (candidatures: any[]) => {
-      const aValide = candidatures.some(c => c.statut === 'VALIDEE');
-      
-      if (aValide) {
-        // ✅ CV accepté → charger les dates disponibles
-        this.loadDates();
-      } else {
-        // ✅ CV rejeté → pas de dates colorées
+    this.candidatureService.getCandidaturesByCandidate(this.candidateId).subscribe({
+      next: (candidatures: any[]) => {
+
+        // ✅ Récupérer la candidature VALIDEE
+        const candidatureValidee = candidatures.find(c => c.statut === 'VALIDEE');
+
+        if (candidatureValidee) {
+          this.candidatureId = candidatureValidee.id; // ✅ stocker l'id
+          this.loadDates();
+        } else {
+          this.loading = false;
+          this.generateCalendar();
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Erreur:', err);
         this.loading = false;
         this.generateCalendar();
-        this.cdr.detectChanges();
       }
-    },
-    error: (err) => {
-      console.error('Erreur:', err);
-      this.loading = false;
-      this.generateCalendar();
-    }
-  });
-}
+    });
+  }
 
-  // ✅ Charger seulement les entretiens disponibles
   loadDates(): void {
     this.loading = true;
     this.entretienService.getEntretiensDisponibles().subscribe({
       next: (data) => {
-        this.datesDisponibles = data; // ✅ utiliser datesDisponibles
+        this.datesDisponibles = data;
         this.loading = false;
         this.generateCalendar();
         this.cdr.detectChanges();
@@ -80,40 +80,26 @@ export class ChoisirDate implements OnInit {
 
   generateCalendar(): void {
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
-    const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+    const lastDay  = new Date(this.currentYear, this.currentMonth + 1, 0);
 
     let startDayOfWeek = firstDay.getDay() - 1;
     if (startDayOfWeek < 0) startDayOfWeek = 6;
 
     this.calendarDays = [];
-
-    for (let i = 0; i < startDayOfWeek; i++) {
-      this.calendarDays.push(null);
-    }
-
-    for (let d = 1; d <= lastDay.getDate(); d++) {
-      this.calendarDays.push(d);
-    }
+    for (let i = 0; i < startDayOfWeek; i++) this.calendarDays.push(null);
+    for (let d = 1; d <= lastDay.getDate(); d++) this.calendarDays.push(d);
   }
 
   prevMonth(): void {
-    if (this.currentMonth === 0) {
-      this.currentMonth = 11;
-      this.currentYear--;
-    } else {
-      this.currentMonth--;
-    }
+    if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
+    else this.currentMonth--;
     this.selectedDay = null;
     this.generateCalendar();
   }
 
   nextMonth(): void {
-    if (this.currentMonth === 11) {
-      this.currentMonth = 0;
-      this.currentYear++;
-    } else {
-      this.currentMonth++;
-    }
+    if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
+    else this.currentMonth++;
     this.selectedDay = null;
     this.generateCalendar();
   }
@@ -138,8 +124,8 @@ export class ChoisirDate implements OnInit {
 
   isPast(day: number | null): boolean {
     if (!day) return false;
-    const today = new Date();
     const date = new Date(this.currentYear, this.currentMonth, day);
+    const today = new Date();
     return date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
   }
 
@@ -159,19 +145,26 @@ export class ChoisirDate implements OnInit {
     });
   }
 
-  // ✅ Choisir une date → marquer non disponible
+  // ✅ Choisir une date — envoyer candidatureId
   choisirDate(entretienId: number): void {
-  if (confirm('Confirmer ce créneau ?')) {
-    const entretien = this.datesDisponibles.find(e => e.id === entretienId);
-    this.entretienService.choisirDate(entretienId).subscribe({
-      next: () => {
-        // ✅ Retirer de la liste affichée
-        this.dateChoisie = entretien;
-        this.datesDisponibles = this.datesDisponibles.filter(e => e.id !== entretienId);
-        this.selectedDay = null;
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('Erreur:', err)
-    });
-  }}
-}
+    if (!this.candidatureId) {
+      alert('Aucune candidature validée trouvée.');
+      return;
+    }
+
+    if (confirm('Confirmer ce créneau ?')) {
+      const entretien = this.datesDisponibles.find(e => e.id === entretienId);
+
+      // ✅ Envoyer candidatureId au backend
+      this.entretienService.choisirDate(entretienId, this.candidatureId).subscribe({
+        next: () => {
+          this.dateChoisie = entretien;
+          this.datesDisponibles = this.datesDisponibles.filter(e => e.id !== entretienId);
+          this.selectedDay = null;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erreur:', err)
+      });
+    }
+  }
+}

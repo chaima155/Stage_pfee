@@ -20,12 +20,13 @@ public class AiService {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public Map<String, Object> analyserCV(
-            String cvPath,        // ✅ String chemin du fichier
+            String cvPath,
             String titreSujet,
             String descriptionSujet,
             String motsCles
     ) {
         try {
+
             // ✅ Lire le fichier depuis le chemin
             byte[] cvBytes = Files.readAllBytes(Paths.get(cvPath));
             String base64CV = Base64.getEncoder().encodeToString(cvBytes);
@@ -100,5 +101,6 @@ public class AiService {
             error.put("commentaire", "Erreur: " + e.getMessage());
             return error;
         }
+
     }
 }

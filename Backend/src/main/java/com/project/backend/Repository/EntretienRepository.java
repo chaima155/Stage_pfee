@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface EntretienRepository extends JpaRepository<Entretien,Long> {
     List<Entretien> findByDisponibleTrue();
+    List<Entretien> findByCandidatureIsNotNull();
+
 
 }

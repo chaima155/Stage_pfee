@@ -19,6 +19,8 @@ import { authGuard } from './components/login/auth.guard';
 import { MySpaceComponent } from './components/my-space/my-space';
 import { StageDetail } from './pages/stage-detail/stage-detail';
 import { EntretienList } from './components/entretien-list/entretien-list';
+import { VideoCall } from './components/video-call/video-call';
+
 
 
 export const routes: Routes = [
@@ -33,6 +35,8 @@ export const routes: Routes = [
   { path: 'my-space', component: MySpaceComponent, canActivate: [authGuard] },
   { path: 'candidature/create/:id', component: CandidatureCreate },
   { path: 'choisir-date', component: ChoisirDate },
+  { path: 'video-call', component: VideoCall },
+
   {
     path: 'dashbord',
     component: AdminLayout,

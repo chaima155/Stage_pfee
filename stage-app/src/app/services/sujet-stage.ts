@@ -28,6 +28,7 @@ export class SujetStageService {
     updateSujet(id: number, sujet: SujetStage): Observable<SujetStage> {
       return this.http.put<SujetStage>(`${this.apiUrl}/${id}`, sujet);
     }
+
       // Dans sujet-stage.service.ts ✅ déjà présent dans votre backend
     getSujetById(id: number): Observable<SujetStage> {
       return this.http.get<SujetStage>(`${this.apiUrl}/${id}`);
@@ -36,8 +37,10 @@ export class SujetStageService {
 
 
     //supprimer un sujets
-    deleteSujet(id: number): Observable<void> {
-      return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    deleteSujet(id: number) {
+      return this.http.delete(
+        `http://localhost:8081/api/sujets/${id}`,
+        { responseType: 'text' } // 👈 TRÈS IMPORTANT
+      );
     }
-
 }

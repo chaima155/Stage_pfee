@@ -10,6 +10,7 @@ import java.util.List;
 public interface CandidatureRepository extends JpaRepository<Candidature, Long> {
     List<Candidature> findByCandidate_Id(Long candidateId);
     List<Candidature> findByCandidate_IdAndStatut(Long candidateId, String statut);
+    List<Candidature> findByCandidate_IdAndSujetStage_Id(Long candidateId, Long sujetStageId);
 
     List<Candidature> findBySujetStage_Id(Long sujetId);
 }

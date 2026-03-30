@@ -22,20 +22,20 @@ public class CandidatureController {
     private final SujetStageRepository sujetStageRepository;
     private final AiService aiService;
     private final CandidateRepository candidateRepository;
-    private final EntretienRepository entretienRepository; // ✅ Ajouter
+    private final EntretienRepository entretienRepository;
 
     public CandidatureController(
             CandidatureRepository candidatureRepository,
             SujetStageRepository sujetStageRepository,
             AiService aiService,
             CandidateRepository candidateRepository,
-            EntretienRepository entretienRepository // ✅ Ajouter
+            EntretienRepository entretienRepository
     ) {
         this.candidatureRepository = candidatureRepository;
         this.sujetStageRepository = sujetStageRepository;
         this.aiService = aiService;
         this.candidateRepository = candidateRepository;
-        this.entretienRepository = entretienRepository; // ✅ Ajouter
+        this.entretienRepository = entretienRepository;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -45,13 +45,20 @@ public class CandidatureController {
             @RequestParam("typeEntretien") String typeEntretien
     ) {
         try {
+            // ✅ Vérifier si le candidat a déjà postulé sur ce sujet
+            List<Candidature> existantes = candidatureRepository
+                    .findByCandidate_IdAndSujetStage_Id(candidateId, sujetId);
+            if (!existantes.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Vous avez déjà postulé sur ce sujet !");
+            }
+
             SujetStage sujet = sujetStageRepository.findById(sujetId)
                     .orElseThrow(() -> new RuntimeException("Sujet non trouvé"));
 
             Candidate candidate = candidateRepository.findById(candidateId)
                     .orElseThrow(() -> new RuntimeException("Candidat non trouvé"));
 
-            // ✅ Récupérer le chemin CV depuis le profil candidat
             String cvPath = candidate.getCV();
             if (cvPath == null || cvPath.isEmpty()) {
                 return ResponseEntity.badRequest().body("Aucun CV trouvé dans votre profil !");
@@ -88,7 +95,9 @@ public class CandidatureController {
 
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
+        } catch (Exception e) {  // ✅ catch correctement placé
+            System.out.println("❌ ERREUR: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur: " + e.getMessage());
         }
@@ -112,7 +121,6 @@ public class CandidatureController {
     @GetMapping("/candidate/{candidateId}/dates")
     public ResponseEntity<?> getDatesByCandidateAccepte(@PathVariable Long candidateId) {
         try {
-            // ✅ Retourner tous les entretiens disponibles
             List<Entretien> entretiens = entretienRepository.findByDisponibleTrue();
 
             List<Map<String, Object>> dates = new ArrayList<>();
@@ -128,4 +136,4 @@ public class CandidatureController {
                     .body("Erreur: " + e.getMessage());
         }
     }
-}
+}
