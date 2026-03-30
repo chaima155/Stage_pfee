@@ -1,0 +1,89 @@
+<aside class="sidebar">
+  <!-- Logo dans la sidebar -->
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <i class="fas fa-cube"></i>
+      <span>DASHMIN</span>
+    </div>
+  </div>
+
+  <!-- Menu principal -->
+  <div class="sidebar-menu">
+    <ul class="nav-list">
+      <!-- Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+      <!-- Elements -->
+      <li class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+          <i class="fas fa-file"></i>
+          <span>Sujet De Stage</span>
+          <i class="fas fa-chevron-right arrow"></i>
+        </a>
+        <ul class="submenu">
+          <li><a (click)="goToCreate()">Nouvel sujet </a></li>
+          <li><a (click)="goToList()">Liste des sujets</a></li>
+
+        </ul>
+      </li>
+
+      <li class="nav-item has-submenu">
+        <a  class="nav-link">
+          <i class="fas fa-file"></i>
+          <span>Les dates d'entretien</span>
+          <i class="fas fa-chevron-right arrow"></i>
+        </a>
+        <ul class="submenu">
+          <li><a (click)="goToCreateEntretien()">Nouvel date </a></li>
+          <li><a (click)="goToListentretien()">Liste des dates</a></li>
+
+        </ul>
+      </li>
+
+      <!-- Forms -->
+      <li class="nav-item">
+        <a  class="nav-link">
+          <i class="fas fa-file-alt"></i>
+          <span>Forms</span>
+        </a>
+      </li>
+
+      <!-- Tables -->
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-table"></i>
+          <span>Tables</span>
+        </a>
+      </li>
+
+      <!-- Charts -->
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-chart-line"></i>
+          <span>Charts</span>
+        </a>
+      </li>
+
+      <!-- Pages avec sous-menu -->
+      <li class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+          <i class="fas fa-file"></i>
+          <span>Pages</span>
+          <i class="fas fa-chevron-right arrow"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#">Login</a></li>
+          <li><a href="#">Register</a></li>
+          <li><a href="#">Forgot Password</a></li>
+          <li><a href="#">404 Page</a></li>
+          <li><a href="#">Blank Page</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</aside>

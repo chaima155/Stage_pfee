@@ -1,0 +1,140 @@
+<div class="create-page">
+  <!-- En-tête avec titre -->
+  <div class="page-title-section">
+    <h2 class="main-title">Modifier un Sujet de Stage</h2>
+    <p class="title-sub">Modifiez les informations ci-dessous pour mettre à jour le sujet</p>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="form-wrapper">
+    <form #form="ngForm" (ngSubmit)="updateSujet()" class="professional-form">
+
+      <!-- Titre -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            Titre <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="sujet.titre"
+            name="titre"
+            required
+            placeholder="Ex: Développement d'une application web"
+          >
+          <small *ngIf="isFieldInvalid('titre')" class="error-text">
+            Le titre est obligatoire
+          </small>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            Description <span class="required">*</span>
+          </label>
+          <textarea
+            class="form-control textarea"
+            [(ngModel)]="sujet.description"
+            name="description"
+            required
+            rows="5"
+            placeholder="Décrivez le sujet en détail..."
+          ></textarea>
+          <small *ngIf="isFieldInvalid('description')" class="error-text">
+            La description est obligatoire
+          </small>
+        </div>
+      </div>
+
+      <!-- Mots Clés et Nombre stagiaires -->
+      <div class="form-row double">
+        <div class="form-group">
+          <label class="form-label">Mots Clés</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="sujet.motsCles"
+            name="motsCles"
+            placeholder="web, mobile, IA, ..."
+          >
+          <small class="form-hint">Séparés par des virgules</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nombre de stagiaires</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="sujet.nbrStagiaires"
+            name="nbrStagiaires"
+            min="1"
+          >
+        </div>
+      </div>
+
+      <!-- Niveau et Durée -->
+      <div class="form-row double">
+        <div class="form-group">
+          <label class="form-label">Niveau</label>
+          <select class="form-control" [(ngModel)]="sujet.niveau" name="niveau">
+            <option value="" disabled>Choisir un niveau</option>
+            <option value="Licence 1">Licence 1</option>
+            <option value="Licence 2">Licence 2</option>
+            <option value="Licence 3">Licence 3</option>
+            <option value="Master 1">Master 1</option>
+            <option value="Master 2">Master 2</option>
+            <option value="Ingénieur">Ingénieur</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Durée (mois)</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="sujet.duree"
+            name="duree"
+            min="1"
+            max="12"
+          >
+        </div>
+      </div>
+
+      <!-- Technologies -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Technologies</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="sujet.technologies"
+            name="technologies"
+            placeholder="Java, Spring Boot, Angular, MySQL, ..."
+          >
+          <small class="form-hint">Séparées par des virgules</small>
+        </div>
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="form-row submit-row">
+        <button type="button" class="btn-cancel" (click)="cancelEdit()">
+          ✕ Annuler
+        </button>
+        <button type="submit" class="btn-submit">
+          ✓ Sauvegarder les modifications
+        </button>
+      </div>
+
+      <!-- Message de succès -->
+      <div class="form-row" *ngIf="showSuccessMessage">
+        <div class="success-message">
+          ✓ Sujet modifié avec succès !
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

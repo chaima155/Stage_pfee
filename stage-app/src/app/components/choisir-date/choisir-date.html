@@ -1,0 +1,82 @@
+<div class="choisir-container">
+
+  <div *ngIf="loading" class="loading">⏳ Chargement...</div>
+
+  <div *ngIf="!loading && !dateChoisie">
+    <div class="page-header">
+      <h2>📅 Choisissez votre date d'entretien</h2>
+      <p>Les dates en bleu sont disponibles pour votre entretien</p>
+    </div>
+
+    <!-- ===== CALENDRIER ===== -->
+    <div class="calendar">
+
+      <!-- Header navigation -->
+      <div class="calendar-header">
+        <button class="nav-btn" (click)="prevMonth()">‹</button>
+        <h3>{{ monthNames[currentMonth] }} {{ currentYear }}</h3>
+        <button class="nav-btn" (click)="nextMonth()">›</button>
+      </div>
+
+      <!-- Jours de la semaine -->
+      <div class="calendar-weekdays">
+        <span>Lun</span>
+        <span>Mar</span>
+        <span>Mer</span>
+        <span>Jeu</span>
+        <span>Ven</span>
+        <span>Sam</span>
+        <span>Dim</span>
+      </div>
+
+      <!-- Jours du mois -->
+      <div class="calendar-days">
+        <div
+          *ngFor="let day of calendarDays"
+          class="calendar-day"
+          [class.empty]="!day"
+          [class.today]="isToday(day)"
+          [class.has-entretien]="hasEntretien(day)"
+          [class.past]="isPast(day)"
+          (click)="day && hasEntretien(day) && selectDay(day)">
+          <span *ngIf="day">{{ day }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HEURES DISPONIBLES ===== -->
+    <div class="time-slots" *ngIf="selectedDay">
+      <h3>{{ selectedDayLabel }} — Créneaux disponibles</h3>
+      <div class="slots-grid">
+        <div
+          *ngFor="let entretien of getEntretiensForDay(selectedDay)"
+          class="slot"
+          (click)="choisirDate(entretien.id)">
+          🕐 {{ entretien.date | date:'HH:mm': 'UTC' }}
+          <span class="sujet-name">{{ entretien.sujetTitre }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="datesDisponibles.length === 0" class="no-dates">
+      ⚠️ Aucune date disponible pour le moment.
+    </div>
+  </div>
+
+  <!-- ===== CONFIRMATION ===== -->
+  <div *ngIf="dateChoisie" class="confirmation-section">
+    <div class="confirmation-card">
+      <div class="check-icon">🎉</div>
+      <h3>Entretien Confirmé !</h3>
+      <p>Sujet : <strong>{{ dateChoisie.sujetTitre }}</strong></p>
+      <div class="confirmed-date">
+        📅 {{ dateChoisie.date | date:'EEEE dd MMMM yyyy': 'UTC' }}
+        à {{ dateChoisie.date | date:'HH:mm' }}
+      </div>
+      <button class="btn-home" (click)="router.navigate(['/my-space'])">
+        → Aller à Mon Espace
+      </button>
+    </div>
+  </div>
+
+</div>

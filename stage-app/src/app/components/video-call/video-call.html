@@ -1,0 +1,158 @@
+<div class="vc-wrapper" *ngIf="!isLoading">
+
+  <!-- ── HEADER ── -->
+  <div class="vc-header">
+    <div class="vc-header-left">
+      <div class="vc-logo">
+        <span class="logo-icon">🎯</span>
+        <span class="logo-text">EntretienPro</span>
+      </div>
+      <div class="vc-badge" [class.connected]="isConnected">
+        <span class="badge-dot"></span>
+        {{ isConnected ? 'Connecté' : 'En attente...' }}
+      </div>
+    </div>
+    <div class="vc-header-center">
+      <span class="vc-candidate-name">{{ candidateName }}</span>
+    </div>
+    <div class="vc-header-right">
+      <div class="vc-timer" *ngIf="isCallActive">
+        🕐 {{ callDuration || '00:00' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIDEOS ── -->
+  <div class="vc-videos">
+
+    <!-- Vidéo distante -->
+    <div class="vc-remote-container">
+      <video #remoteVideo autoplay playsinline class="vc-remote-video"></video>
+      <div class="vc-remote-label">
+        <span>{{ isResponsable ? candidateName : 'Responsable' }}</span>
+      </div>
+      <div class="vc-no-video" *ngIf="!isConnected">
+        <div class="no-video-icon">👤</div>
+        <p>En attente de connexion...</p>
+      </div>
+    </div>
+
+    <!-- Vidéo locale + ATTENTION GUARD -->
+    <div class="vc-local-container">
+      <video #localVideo autoplay playsinline muted class="vc-local-video-hidden"></video>
+      <video #localVideoVisible autoplay playsinline muted class="vc-local-video"
+             [class.camera-off]="isCameraOff"></video>
+
+      <!-- Overlay caméra coupée -->
+      <div class="vc-camera-off" *ngIf="isCameraOff">
+        <span>📷</span>
+        <p>Caméra désactivée</p>
+      </div>
+
+      <!-- ATTENTION GUARD overlay -->
+      <div class="attention-guard"
+           *ngIf="alertMessage"
+           [class.severity-warning]="alertSeverity === 'warning'"
+           [class.severity-danger]="alertSeverity === 'danger'"
+           [class.severity-critical]="alertSeverity === 'critical'">
+        <div class="ag-header">
+          <span class="ag-dot"></span>
+          <span class="ag-title">ATTENTION GUARD</span>
+          <span class="ag-dot"></span>
+        </div>
+        <div class="ag-message">{{ alertMessage }}</div>
+      </div>
+
+      <div class="vc-local-label">Vous</div>
+    </div>
+
+  </div>
+
+  <!-- ── CONTROLES ── -->
+  <div class="vc-controls">
+    <button class="vc-btn"
+            [class.active]="isMuted"
+            (click)="toggleMute()"
+            [title]="isMuted ? 'Activer micro' : 'Couper micro'">
+      {{ isMuted ? '🔇' : '🎙️' }}
+      <span>{{ isMuted ? 'Micro off' : 'Micro' }}</span>
+    </button>
+
+    <button class="vc-btn"
+            [class.active]="isCameraOff"
+            (click)="toggleCamera()"
+            [title]="isCameraOff ? 'Activer caméra' : 'Couper caméra'">
+      {{ isCameraOff ? '📷' : '📹' }}
+      <span>{{ isCameraOff ? 'Cam off' : 'Caméra' }}</span>
+    </button>
+
+    <button class="vc-btn end-call" (click)="endCall()">
+      📵
+      <span>Terminer</span>
+    </button>
+  </div>
+
+  <!-- ── LOG ACTIONS (responsable uniquement) ── -->
+  <div class="vc-actions-log" *ngIf="isResponsable && actions.length > 0">
+    <div class="log-header">📋 Journal de l'entretien</div>
+    <div class="log-body">
+      <div class="log-item"
+           *ngFor="let action of actions"
+           [class.log-alert]="action.includes('👁️') || action.includes('📱') || action.includes('🚨')">
+        {{ action }}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── LOADING ── -->
+<div class="vc-loading" *ngIf="isLoading">
+  <div class="loading-spinner"></div>
+  <p>Initialisation de l'entretien...</p>
+</div>
+
+<!-- ── DECISION FINALE (responsable) ── -->
+<div class="vc-decision-overlay" *ngIf="showDecision">
+  <div class="vc-decision-card">
+
+    <div class="decision-header">
+      <h2>🤖 Analyse IA de l'entretien</h2>
+      <p class="decision-candidate">Candidat : <strong>{{ candidateName }}</strong></p>
+      <p class="decision-duration">Durée : <strong>{{ callDuration }}</strong></p>
+    </div>
+
+    <!-- Analyse en cours -->
+    <div class="decision-analyzing" *ngIf="isAnalyzing">
+      <div class="loading-spinner"></div>
+      <p>Analyse en cours par l'IA...</p>
+    </div>
+
+    <!-- Résultat analyse -->
+    <div class="decision-analysis" *ngIf="!isAnalyzing && aiAnalysis">
+      <div class="analysis-box">
+        <div class="analysis-icon">📊</div>
+        <div class="analysis-text">{{ aiAnalysis }}</div>
+      </div>
+    </div>
+
+    <!-- Boutons décision -->
+    <div class="decision-actions" *ngIf="!resultSent && !isAnalyzing">
+      <button class="btn-accept" (click)="sendDecision('ACCEPTE')" [disabled]="isSending">
+        ✅ Accepter le candidat
+      </button>
+      <button class="btn-refuse" (click)="sendDecision('REFUSE')" [disabled]="isSending">
+        ❌ Refuser le candidat
+      </button>
+    </div>
+
+    <!-- Confirmation envoi -->
+    <div class="decision-sent" *ngIf="resultSent">
+      <div class="sent-icon">{{ decision === 'ACCEPTE' ? '🎉' : '📩' }}</div>
+      <p>Décision envoyée avec succès !</p>
+      <p class="sent-sub">Redirection en cours...</p>
+    </div>
+    
+
+  </div>
+</div>

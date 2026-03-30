@@ -1,0 +1,83 @@
+<section class="hero-split">
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Gérez vos stages intelligemment</h1>
+      <p>
+        Une plateforme moderne pour les étudiants, enseignants et entreprises
+        afin de gérer les stages, candidatures et suivis facilement.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn-main">Commencer</button>
+        <button class="btn-outline">Découvrir</button>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <img src="images/hiring.jpg" alt="Stage Management">
+    </div>
+  </section>
+
+  <!-- SEARCH BAR -->
+  <div class="hero-search">
+    <input type="text" placeholder="Domaine de stage...">
+    <input type="text" placeholder="Emplacement (Adresse)">
+    <button>RECHERCHER</button>
+  </div>
+
+</section>
+
+<!-- POURQUOI NOUS CHOISIR -->
+<section class="why" id="why">
+  <h2>Pourquoi choisir StageManager ?</h2>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <h3>🎯 Centralisation</h3>
+      <p>Toutes les candidatures, stages et suivis dans une seule plateforme.</p>
+    </div>
+
+    <div class="why-card">
+      <h3>⚡ Rapidité</h3>
+      <p>Processus automatisé de validation et de suivi des stages.</p>
+    </div>
+
+    <div class="why-card">
+      <h3>🔐 Sécurité</h3>
+      <p>Données protégées, accès sécurisé pour chaque rôle.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AVIS ETUDIANTS -->
+<section class="reviews" id="reviews">
+  <h2 >Avis des étudiants</h2>
+
+  <!-- Slider container -->
+<div class="slider" style="--width: 250px; --height: 250px;" [style.--quantity]="avisList.length">
+  <div class="list">
+    <div class="item" *ngFor="let avis of avisList; let i = index" [style.--position]="i + 1">
+      <div class="card" [style.background]="avis.gradient">
+        <div class="avis-stars-display">
+          <i class="fa-solid fa-star" *ngFor="let s of [].constructor(avis.rating)"></i>
+          <i class="fa-regular fa-star" *ngFor="let s of [].constructor(5 - avis.rating)"></i>
+        </div>
+        <p>"{{ avis.text }}"</p>
+        <p class="student-name">— {{ avis.nom }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+  
+</section>
+
+
+<!-- CALL TO ACTION -->
+<section class="cta">
+  <h2>Prêt à démarrer votre parcours professionnel ?</h2>
+  <p>Rejoignez StageManager et gérez vos stages comme un pro.</p>
+  <br>
+  <button>Créer un compte</button>
+</section>

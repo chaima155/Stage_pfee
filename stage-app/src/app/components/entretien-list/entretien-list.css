@@ -1,0 +1,86 @@
+/* Conteneur du tableau */
+.entretien-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header du tableau */
+.entretien-table thead {
+  background: linear-gradient(90deg,#5b7cfa,#7b4bb7);
+  color: white;
+}
+
+.entretien-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* lignes */
+.entretien-table td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  color: #444;
+}
+
+.entretien-table tbody tr:hover {
+  background: #f8f9fc;
+  transition: 0.2s;
+}
+
+/* badges statut */
+.badge-disponible {
+  background: #e6f9ee;
+  color: #1f9d55;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge-indisponible {
+  background: #fde8e8;
+  color: #e02424;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* colonne actions */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* bouton supprimer */
+.btn-delete {
+  background: #f8d7da;
+  color: #842029;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.btn-delete:hover {
+  background: #f1b0b7;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .entretien-table th,
+  .entretien-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,103 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<div class="contact-page">
+
+  <!-- Hero -->
+  <div class="contact-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-tag">Informations</span>
+      <h1>Partagez votre <em>expérience</em></h1>
+<p>Votre avis nous aide à améliorer notre plateforme et à mieux servir nos utilisateurs.</p>
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="contact-cards">
+    <div class="contact-card" style="--delay: 0s">
+      <div class="card-icon">
+        <i class="fa-solid fa-location-dot"></i>
+      </div>
+      <div class="card-content">
+        <h3>Adresse</h3>
+        <p>nasria canter, emna city<br/>sfax<br/><strong>Tunisie</strong></p>
+      </div>
+    </div>
+
+    <div class="contact-card" style="--delay: 0.1s">
+      <div class="card-icon">
+        <i class="fa-solid fa-phone"></i>
+      </div>
+      <div class="card-content">
+        <h3>Call Center</h3>
+        <p>Appel gratuit depuis la Grande-Bretagne. Pour les autres pays, privilégiez le support électronique.</p>
+        <a href="tel:+33555444333" class="card-link">+33 555 444 333</a>
+      </div>
+    </div>
+
+    <div class="contact-card" style="--delay: 0.2s">
+      <div class="card-icon">
+        <i class="fa-solid fa-envelope"></i>
+      </div>
+      <div class="card-content">
+        <h3>Support Électronique</h3>
+        <p>Écrivez-nous ou utilisez notre système de tickets.</p>
+        <a href="mailto:info@company.com" class="card-link">info&#64;company.com</a>
+        <a href="#" class="card-link">Ticketio — plateforme de tickets</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Section: Avis + Map -->
+  <div class="contact-main">
+<!-- Avis Form -->
+<div class="form-section">
+  <h2>Donnez votre avis</h2>
+  <p class="form-subtitle">Partagez votre expérience avec nous.</p>
+
+  <div class="form-group">
+    <label>Nom complet</label>
+    <input type="text" [(ngModel)]="nom" placeholder="Votre nom" />
+  </div>
+
+  <div class="form-group">
+    <label>Note</label>
+    <div class="stars-input">
+      <i class="fa-solid fa-star star-btn" (click)="setRating(1)" [class.active]="rating >= 1"></i>
+      <i class="fa-solid fa-star star-btn" (click)="setRating(2)" [class.active]="rating >= 2"></i>
+      <i class="fa-solid fa-star star-btn" (click)="setRating(3)" [class.active]="rating >= 3"></i>
+      <i class="fa-solid fa-star star-btn" (click)="setRating(4)" [class.active]="rating >= 4"></i>
+      <i class="fa-solid fa-star star-btn" (click)="setRating(5)" [class.active]="rating >= 5"></i>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Votre avis</label>
+    <textarea [(ngModel)]="avisText" placeholder="Partagez votre expérience..." rows="5"></textarea>
+  </div>
+
+  <button class="btn-send" (click)="submitAvis()">
+    <i class="fa-solid fa-paper-plane"></i>
+    Soumettre l'avis
+  </button>
+
+  <!-- ✅ Success message -->
+  <div class="success-banner" *ngIf="successMessage">
+    <i class="fa-solid fa-circle-check"></i>
+    {{ successMessage }}
+  </div>
+</div>
+
+<!-- Map -->
+<div class="map-section">
+  <h2>Nous trouver</h2>
+  <p class="form-subtitle">Venez nous rendre visite à notre bureau.</p>
+  <div class="map-container">
+    <iframe
+      src="https://www.openstreetmap.org/export/embed.html?bbox=10.74%2C34.73%2C10.78%2C34.76&layer=mapnik&marker=34.7406%2C10.7603"
+      style="width:100%; height:100%; border:none;">
+    </iframe>
+  </div>
+</div>
+</div>

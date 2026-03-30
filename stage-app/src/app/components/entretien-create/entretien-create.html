@@ -1,0 +1,56 @@
+<div class="entretien-container">
+
+  <!-- Header -->
+  <div class="form-header">
+    <div class="header-icon">📅</div>
+    <h2 class="form-title">Ajouter une date d'entretien</h2>
+    <p class="form-subtitle">Planifiez une nouvelle date d'entretien</p>
+  </div>
+
+  <!-- Formulaire -->
+  <form class="entretien-form" #entretienForm="ngForm" (ngSubmit)="saveEntretien(entretienForm)">
+
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fa fa-calendar"></i>
+        Date et heure
+        <span class="required">*</span>
+      </label>
+      <div class="date-input-wrapper">
+        <input
+          type="datetime-local"
+          [(ngModel)]="entretien.date"
+          name="date"
+          required
+          class="form-control"
+          #dateField="ngModel"
+          [class.is-invalid]="dateField.invalid && dateField.touched">
+        <i class="fa fa-clock input-icon"></i>
+      </div>
+
+      <div class="error-message" *ngIf="dateField.invalid && dateField.touched">
+        <i class="fa fa-exclamation-circle"></i>
+        Veuillez sélectionner une date et heure
+      </div>
+
+      <div class="form-hint">
+        <i class="fa fa-info-circle"></i>
+        Sélectionnez la date et l'heure de l'entretien
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel"
+        (click)="router.navigate(['//dashbord/entretien/list'])">
+        <span class="btn-icon">✕</span>
+        Annuler
+      </button>
+      <button type="submit" class="btn-submit"
+        [disabled]="entretienForm.invalid">
+        <span class="btn-icon">💾</span>
+        Enregistrer
+      </button>
+    </div>
+
+  </form>
+</div>

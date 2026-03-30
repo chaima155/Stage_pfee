@@ -1,0 +1,74 @@
+<div class="sujet-list-container">
+  <!-- En-tête avec titre et bouton d'ajout -->
+  <div class="list-header">
+    <h2 class="list-title">
+      <i class="fas fa-list-alt"></i>
+      Liste des sujets de stage
+    </h2>
+    
+    <button (click)="goToCreate()" class="btn-add">
+      <i class="fas fa-plus"></i>
+      Ajouter Sujet Stage
+    </button>
+  </div>
+
+  <!-- Tableau stylisé -->
+  <div class="table-responsive">
+    <table class="sujet-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>Niveau</th>
+          <th>Durée</th> 
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Message si aucun sujet -->
+        <tr *ngIf="sujets.length === 0" class="empty-row">
+          <td colspan="6">
+            <div class="empty-message">
+              <i class="fas fa-folder-open"></i>
+              <p>Aucun sujet trouvé</p>
+              <button (click)="goToCreate()" class="btn-add-empty">
+                <i class="fas fa-plus"></i>
+                Ajouter un sujet
+              </button>
+            </div>
+          </td>
+        </tr>
+        
+        <!-- Liste des sujets -->
+        <tr *ngFor="let sujet of sujets" class="sujet-row">
+          <td class="id-cell">#{{ sujet.id }}</td>
+          <td class="title-cell">
+            <strong>{{ sujet.titre }}</strong>
+          </td>
+          <td class="desc-cell">
+            {{ sujet.description | slice:0:80 }}
+          </td>
+          <td>
+            <span class="badge niveau">{{ sujet.niveau || 'Non spécifié' }}</span>
+          </td>
+          <td class="duree-cell">
+            <span class="duree-badge">{{ sujet.duree }} mois</span>
+          </td>
+          
+          <td class="actions-cell">
+            <button class="btn-edit" (click)="editSujet(sujet.id!)" title="Modifier">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-delete" (click)="deleteSujet(sujet.id!)" title="Supprimer">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pied de tableau avec compteur -->
+ 
+</div>

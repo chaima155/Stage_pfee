@@ -1,0 +1,74 @@
+<div class="detail-container" *ngIf="!loading && sujet">
+
+  <!-- Bouton retour -->
+  <button class="btn-back" (click)="router.navigate(['/stages'])">
+    ← Retour aux offres
+  </button>
+
+  <div class="detail-card">
+
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="logo-placeholder">{{ sujet.titre?.charAt(0) }}</div>
+      <div class="header-info">
+        <span class="offer-type">STAGE</span>
+        <h1>{{ sujet.titre }}</h1>
+        <div class="offer-meta">
+          <span>🏢 {{ sujet.entreprise || 'Entreprise' }}</span>
+          <span>📍 {{ sujet.localisation || 'Tunisie' }}</span>
+          <span>👥 {{ sujet.nbrStagiaires }} stagiaire(s)</span>
+          <span>⏱ {{ sujet.duree }} mois</span>
+        </div>
+      </div>
+      <button class="btn-postuler" (click)="postuler()">
+        Postuler →
+      </button>
+    </div>
+
+    <!-- Description -->
+    <div class="detail-section">
+      <h2>Description</h2>
+      <p>{{ sujet.description }}</p>
+    </div>
+
+    <!-- Mots clés -->
+    <div class="detail-section">
+      <h2>Compétences requises</h2>
+      <div class="tags">
+        <span class="tag" *ngFor="let tag of sujet.motsCles?.split(',')">
+          {{ tag.trim() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Technologies -->
+    <div class="detail-section" *ngIf="sujet.technologies">
+      <h2>Technologies</h2>
+      <div class="tags">
+        <span class="tag-tech" *ngFor="let tech of sujet.technologies?.split(',')">
+          {{ tech.trim() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Dates entretien -->
+    <div class="detail-section" *ngIf="sujet.entretien?.length > 0">
+      <h2>📅 Dates d'entretien disponibles</h2>
+      <div class="dates-grid">
+        <div class="date-item" *ngFor="let e of sujet.entretien">
+          {{ e.date | date:'dd/MM/yyyy HH:mm' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton postuler -->
+    <div class="detail-footer">
+      <button class="btn-postuler-big" (click)="postuler()">
+        🚀 Postuler maintenant
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading">⏳ Chargement...</div>

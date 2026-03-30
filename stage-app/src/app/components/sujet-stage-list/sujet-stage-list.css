@@ -1,0 +1,301 @@
+/* ===== Conteneur principal ===== */
+.sujet-list-container {
+  background: #f8f9fc;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== En-tête de la liste ===== */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.list-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.list-title i {
+  color: #4e73df;
+  font-size: 28px;
+}
+
+/* ===== Bouton d'ajout ===== */
+.btn-add {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+}
+
+.btn-add:hover {
+  background: #4a90e2;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(78, 115, 223, 0.4);
+}
+
+.btn-add i {
+  font-size: 18px;
+}
+
+/* ===== Conteneur tableau responsive ===== */
+.table-responsive {
+  overflow-x: auto;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Tableau ===== */
+.sujet-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.sujet-table thead tr {
+  background: linear-gradient(135deg, #4a90e2 0%,#4a90e2 100%);
+}
+
+.sujet-table th {
+  padding: 18px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sujet-table td {
+  padding: 16px;
+  border-bottom: 1px solid #edf2f9;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+/* ===== Lignes du tableau ===== */
+.sujet-row:hover {
+  background: #f8fafd;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+.sujet-row:last-child td {
+  border-bottom: none;
+}
+
+/* ===== Cellules spécifiques ===== */
+.id-cell {
+  font-weight: 600;
+  color: #4a90e2;
+  width: 60px;
+}
+
+.title-cell {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.desc-cell {
+  color: #6c757d;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.duree-cell {
+  text-align: center;
+}
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge.niveau {
+  background: #e8f0fe;
+  color: #4e73df;
+}
+
+.duree-badge {
+  background: #f0f4f8;
+  color: #2c3e50;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ===== Boutons d'action ===== */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.btn-edit, .btn-delete {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 16px;
+}
+
+.btn-edit {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.btn-edit:hover {
+  background: #ffc107;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-delete:hover {
+  background: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ===== État vide ===== */
+.empty-row td {
+  padding: 60px 20px;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-message i {
+  font-size: 60px;
+  color: #cbd5e0;
+  margin-bottom: 15px;
+}
+
+.empty-message p {
+  font-size: 18px;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.btn-add-empty {
+  background: #4e73df;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-add-empty:hover {
+  background: #224abe;
+  transform: translateY(-2px);
+}
+
+/* ===== Pied de tableau ===== */
+.table-footer {
+  margin-top: 20px;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.table-info {
+  color: #6c757d;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-info i {
+  color: #4e73df;
+}
+
+.table-info strong {
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sujet-row {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .sujet-list-container {
+    padding: 15px;
+  }
+
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table-footer {
+    justify-content: center;
+  }
+}
