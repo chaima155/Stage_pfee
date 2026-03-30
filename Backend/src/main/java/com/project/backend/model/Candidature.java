@@ -77,6 +77,8 @@ public class Candidature {
         return typeEntretien;
     }
 
+    public void setTypeEntretien(String typeEntretien) {
+        this.typeEntretien = typeEntretien;
     }
 }
 

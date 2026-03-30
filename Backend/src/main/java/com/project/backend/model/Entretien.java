@@ -68,6 +68,8 @@ public class Entretien {
         return candidature;
     }
 
+    public void setCandidature(Candidature candidature) {
+        this.candidature = candidature;
     }
 }
 

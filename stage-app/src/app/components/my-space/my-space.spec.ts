@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MySpace } from './my-space';
+import { MySpaceComponent } from './my-space';
 
-describe('MySpace', () => {
-  let component: MySpace;
-  let fixture: ComponentFixture<MySpace>;
+describe('MySpaceComponent', () => {
+  let component: MySpaceComponent;
+  let fixture: ComponentFixture<MySpaceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MySpace]
+      imports: [MySpaceComponent]
     })
     .compileComponents();
 
