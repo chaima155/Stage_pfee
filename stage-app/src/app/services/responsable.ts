@@ -47,10 +47,23 @@ export class ResponsableService {
    * Get current responsable from server
    */
   getCurrentResponsable(): Observable<Responsable> {
-    return this.http.get<Responsable>(`${this.apiUrl}/me`).pipe(
-      tap(responsable => this.updateResponsableSession(responsable))
-    );
+  // ✅ Récupérer l'ID depuis localStorage
+  const stored = localStorage.getItem('currentResponsable') 
+              || localStorage.getItem('user');
+  
+  if (stored) {
+    const data = JSON.parse(stored);
+    if (data.id) {
+      return this.http.get<Responsable>(`${this.apiUrl}/${data.id}`).pipe(
+        tap(responsable => this.updateResponsableSession(responsable))
+      );
+    }
   }
+  
+  return this.http.get<Responsable>(`${this.apiUrl}/me`).pipe(
+    tap(responsable => this.updateResponsableSession(responsable))
+  );
+}
 
   /**
    * Get current responsable value (synchronous)
@@ -104,10 +117,10 @@ export class ResponsableService {
    * Update responsable
    */
   updateResponsable(id: number, data: Responsable): Observable<Responsable> {
-    return this.http.put<Responsable>(`${this.apiUrl}/${id}`, data).pipe(
-      tap(updated => this.updateResponsableSession(updated))
-    );
-  }
+  return this.http.put<Responsable>(`${this.apiUrl}/${id}`, data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
 
   /**
    * Update responsable photo

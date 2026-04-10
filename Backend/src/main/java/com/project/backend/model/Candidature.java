@@ -21,7 +21,7 @@ public class Candidature {
 
     @ManyToOne
     @JoinColumn(name = "sujet_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"candidatures", "hibernateLazyInitializer"})
     private SujetStage sujetStage;
 
     public Long getId() {

@@ -4,55 +4,56 @@ import com.project.backend.Repository.CandidatureRepository;
 import com.project.backend.Repository.EntretienRepository;
 import com.project.backend.model.Candidature;
 import com.project.backend.model.Entretien;
+import com.project.backend.service.EmailService; // ✅ ajouter
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/entretien")
 public class EntretienController {
 
     private final EntretienRepository entretienRepository;
-    private final CandidatureRepository candidatureRepository; // ✅ ajouter
+    private final CandidatureRepository candidatureRepository;
+    private final EmailService emailService; // ✅ ajouter
 
     public EntretienController(
             EntretienRepository entretienRepository,
-            CandidatureRepository candidatureRepository // ✅ ajouter
+            CandidatureRepository candidatureRepository,
+            EmailService emailService // ✅ ajouter
     ) {
-        this.entretienRepository = entretienRepository;
+        this.entretienRepository  = entretienRepository;
         this.candidatureRepository = candidatureRepository;
+        this.emailService         = emailService; // ✅ ajouter
     }
 
-    // ✅ Créer un entretien
     @PostMapping
     public ResponseEntity<Entretien> create(@RequestBody Entretien entretien) {
         entretien.setDisponible(true);
         return new ResponseEntity<>(entretienRepository.save(entretien), HttpStatus.CREATED);
     }
 
-    // ✅ Liste tous — avec candidat inclus
     @GetMapping
     public List<Entretien> getAllEntretien() {
         return entretienRepository.findAll();
     }
 
-    // ✅ Par ID
     @GetMapping("/{id}")
     public Entretien getEntretienById(@PathVariable Long id) {
         return entretienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entretien non trouvé"));
     }
 
-    // ✅ Disponibles uniquement
     @GetMapping("/disponibles")
     public ResponseEntity<List<Entretien>> getDisponibles() {
         return ResponseEntity.ok(entretienRepository.findByDisponibleTrue());
     }
 
-    // ✅ Candidat choisit une date — lier candidature
     @PutMapping("/{id}/choisir")
     public ResponseEntity<?> choisirDate(
             @PathVariable Long id,
@@ -62,13 +63,11 @@ public class EntretienController {
             Entretien entretien = entretienRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Entretien non trouvé"));
 
-            // Vérifier disponibilité
             if (!entretien.getDisponible()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("Ce créneau n'est plus disponible.");
             }
 
-            // ✅ Lier la candidature si envoyée
             if (body != null && body.containsKey("candidatureId")) {
                 Long candidatureId = Long.valueOf(body.get("candidatureId").toString());
                 Candidature candidature = candidatureRepository.findById(candidatureId)
@@ -76,7 +75,6 @@ public class EntretienController {
                 entretien.setCandidature(candidature);
             }
 
-            // ✅ Marquer non disponible
             entretien.setDisponible(false);
             entretienRepository.save(entretien);
 
@@ -92,7 +90,7 @@ public class EntretienController {
         }
     }
 
-    // ✅ Terminer entretien avec résultat IA
+    // ✅ Terminer avec email
     @PutMapping("/{id}/terminer")
     public ResponseEntity<?> terminer(
             @PathVariable Long id,
@@ -101,33 +99,72 @@ public class EntretienController {
         try {
             Entretien entretien = entretienRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Entretien non trouvé"));
-            entretien.setResultat(body.get("resultat"));
-            entretien.setNotesIA(body.get("notes"));
-            return ResponseEntity.ok(entretienRepository.save(entretien));
+
+            String resultat = body.get("resultat");
+            String notes    = body.get("notes");
+
+            entretien.setResultat(resultat);
+            entretien.setNotesIA(notes);
+            entretienRepository.save(entretien);
+
+            // ✅ Récupérer candidat depuis DB
+            Candidature candidature = entretien.getCandidature();
+
+            if (candidature != null && candidature.getCandidate() != null) {
+                String email = candidature.getCandidate().getEmail();
+                String name  = candidature.getCandidate().getNom();
+
+                if (email != null && !email.isEmpty()) {
+                    try {
+                        emailService.sendResultatEmail(email, name, resultat);
+                        System.out.println("✅ Email envoyé à: " + email);
+                    } catch (Exception e) {
+                        System.err.println("❌ Erreur email: " + e.getMessage());
+                    }
+                }
+            }
+
+            return ResponseEntity.ok(entretien);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur: " + e.getMessage());
         }
     }
 
-    // ✅ Supprimer
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             Entretien entretien = entretienRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Entretien non trouvé"));
-
-            // ✅ Délier la candidature avant suppression
             entretien.setCandidature(null);
             entretienRepository.save(entretien);
-
-            // ✅ Puis supprimer
             entretienRepository.deleteById(id);
-
             return ResponseEntity.ok("Entretien supprimé");
-
         } catch (Exception e) {
             System.out.println("❌ Erreur suppression: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/supprimer-passes")
+    public ResponseEntity<?> supprimerDatesPassees() {
+        try {
+            List<Entretien> entretiens = entretienRepository.findByDisponibleTrue();
+            Date maintenant = new Date();
+
+            List<Entretien> aSupprimer = entretiens.stream()
+                    .filter(e -> e.getDate() != null && e.getDate().before(maintenant))
+                    .collect(java.util.stream.Collectors.toList());
+
+            entretienRepository.deleteAll(aSupprimer);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", aSupprimer.size() + " date(s) supprimée(s)",
+                    "count",   aSupprimer.size()
+            ));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur: " + e.getMessage());
         }

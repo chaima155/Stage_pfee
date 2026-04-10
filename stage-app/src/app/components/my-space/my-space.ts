@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Candidate as UserProfile } from '../../models/candidate';
 import { take } from 'rxjs/operators';
+import { ChoisirDate } from '../choisir-date/choisir-date';
 
 @Component({
     selector: 'app-my-space',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, ChoisirDate],
     templateUrl: './my-space.html',
     styleUrls: ['./my-space.css'],
 })

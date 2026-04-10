@@ -26,6 +26,7 @@ export class AttentionGuardService {
   private outOfFrameCount = 0;
   private noFaceCount = 0;
   private eyesClosedCount = 0;
+  private phoneCount = 0;
 
   private stats = {
     totalAlerts: 0,
@@ -99,75 +100,77 @@ export class AttentionGuardService {
   }
 
   private async analyze(
-    video: HTMLVideoElement,
-    onAlert: (event: AlertEvent) => void
-  ): Promise<void> {
-    if (!video || video.readyState < 2) return;
+  video: HTMLVideoElement,
+  onAlert: (event: AlertEvent) => void
+): Promise<void> {
 
-    try {
-      const detections = await faceapi
-        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceExpressions();
+  // ✅ Vérifications complètes
+  if (!video) return;
+  if (video.readyState < 2) return;
+  if (video.videoWidth === 0 || video.videoHeight === 0) return;
+  if (video.paused || video.ended) return;
 
-      // ── Aucun visage ──
-      if (detections.length === 0) {
-        this.noFaceCount++;
-        if (this.noFaceCount >= 2) {
-          this.emit('NO_FACE', 'Visage non détecté', 'danger', onAlert);
-        }
-        return;
+  try {
+    const detections = await faceapi
+      .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceExpressions();
+
+    if (detections.length === 0) {
+      this.noFaceCount++;
+      if (this.noFaceCount >= 2) {
+        this.emit('NO_FACE', 'Visage non détecté', 'danger', onAlert);
       }
-
-      this.noFaceCount = 0;
-
-      // ── Plusieurs visages ──
-      if (detections.length > 1) {
-        this.emit('MULTIPLE_FACES', 'Plusieurs visages détectés', 'critical', onAlert);
-        return;
-      }
-
-      const detection = detections[0];
-      const landmarks = detection.landmarks;
-      const box       = detection.detection.box;
-
-      // ── Hors cadre ──
-      const outOfFrame = this.isFaceOutOfFrame(box, video.videoWidth, video.videoHeight);
-      if (outOfFrame.isOut) {
-        this.outOfFrameCount++;
-        if (this.outOfFrameCount >= 2) {
-          this.emit('OUT_OF_FRAME', `Candidat sort du cadre ${outOfFrame.direction}`, 'critical', onAlert);
-        }
-        return;
-      }
-      this.outOfFrameCount = 0;
-
-      // ── Détection yeux fermés ──
-      const eyeStatus = this.detectEyes(landmarks);
-      if (eyeStatus === 'CLOSED') {
-        this.eyesClosedCount++;
-        if (this.eyesClosedCount >= 2) {
-          this.emit('EYES_CLOSED', '👁️ EYES NOT DETECTED — yeux fermés', 'danger', onAlert);
-        }
-      } else {
-        this.eyesClosedCount = 0;
-
-        // ── Détection regard ──
-        const gaze = this.estimateGaze(landmarks, box);
-        if (gaze === 'LEFT')  this.emit('GAZE_LEFT',  '👁️ EYES NOT DETECTED — regarde à gauche', 'warning', onAlert);
-        if (gaze === 'RIGHT') this.emit('GAZE_RIGHT', '👁️ EYES NOT DETECTED — regarde à droite', 'warning', onAlert);
-        if (gaze === 'DOWN')  this.emit('GAZE_DOWN',  '👁️ EYES NOT DETECTED — regarde en bas',   'warning', onAlert);
-      }
-
-      // ── ✅ Détection téléphone ── ← ICI
-      if (detection.expressions.surprised > 0.7) {
-        // fallback expressions — remplacé par détection mains ci-dessous
-      }
-
-    } catch (err) {
-      console.warn('⚠️ Erreur analyse:', err);
+      return;
     }
+    this.noFaceCount = 0;
+
+    if (detections.length > 1) {
+      this.emit('MULTIPLE_FACES', 'Plusieurs visages détectés', 'critical', onAlert);
+      return;
+    }
+
+    const detection = detections[0];
+    const landmarks = detection.landmarks;
+    const box       = detection.detection.box;
+
+    const outOfFrame = this.isFaceOutOfFrame(box, video.videoWidth, video.videoHeight);
+    if (outOfFrame.isOut) {
+      this.outOfFrameCount++;
+      if (this.outOfFrameCount >= 2) {
+        this.emit('OUT_OF_FRAME', `🚨 Candidat sort du cadre ${outOfFrame.direction}`, 'critical', onAlert);
+      }
+      return;
+    }
+    this.outOfFrameCount = 0;
+
+    const eyeStatus = this.detectEyes(landmarks);
+    if (eyeStatus === 'CLOSED') {
+      this.eyesClosedCount++;
+      if (this.eyesClosedCount >= 2) {
+        this.emit('EYES_CLOSED', '👁️ EYES NOT DETECTED — yeux fermés', 'danger', onAlert);
+      }
+    } else {
+      this.eyesClosedCount = 0;
+      const gaze = this.estimateGaze(landmarks, box);
+      if (gaze === 'LEFT')  this.emit('GAZE_LEFT',  '👁️ EYES NOT DETECTED — regarde à gauche', 'warning', onAlert);
+      if (gaze === 'RIGHT') this.emit('GAZE_RIGHT', '👁️ EYES NOT DETECTED — regarde à droite', 'warning', onAlert);
+      if (gaze === 'DOWN')  this.emit('GAZE_DOWN',  '👁️ EYES NOT DETECTED — regarde en bas',   'warning', onAlert);
+    }
+
+    if (this.detectPhoneByMotion(video)) {
+      this.phoneCount++;
+      if (this.phoneCount >= 2) {
+        this.emit('PHONE_DETECTED', '📱 PHONE DETECTED !', 'critical', onAlert);
+      }
+    } else {
+      this.phoneCount = 0;
+    }
+
+  } catch (err) {
+    // ✅ Ignorer les erreurs canvas silencieusement
   }
+}
 
   // ── Détection yeux ouverts/fermés ──
   private detectEyes(landmarks: faceapi.FaceLandmarks68): string {

@@ -1,7 +1,7 @@
 .choisir-container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
+  max-width: 420px;
+  margin: 0;
+  padding: 0;
 }
 
 .page-header {
@@ -24,7 +24,7 @@
 .calendar {
   background: white;
   border-radius: 16px;
-  padding: 20px;
+  padding: 14px; /* 20px → 14px */
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   margin-bottom: 25px;
 }
@@ -37,18 +37,18 @@
 }
 
 .calendar-header h3 {
-  font-size: 18px;
+  font-size: 15px; /* 18px → 15px */
   font-weight: 700;
   color: #2c3e50;
 }
 
 .nav-btn {
+  width: 28px;  /* 35px → 28px */
+  height: 28px; /* 35px → 28px */
+  font-size: 16px; /* 20px → 16px */
   background: #f8f9fa;
   border: none;
-  width: 35px;
-  height: 35px;
   border-radius: 50%;
-  font-size: 20px;
   cursor: pointer;
   color: #4e73df;
   font-weight: 700;
@@ -68,17 +68,17 @@
 }
 
 .calendar-weekdays span {
-  font-size: 12px;
+  font-size: 10px; /* 12px → 10px */
   font-weight: 600;
   color: #6c757d;
   text-transform: uppercase;
-  padding: 5px 0;
+  padding: 3px 0;
 }
 
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 2px; /* 4px → 2px */
 }
 
 .calendar-day {
@@ -88,7 +88,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 11px; /* 14px → 11px */
   font-weight: 500;
   color: #2c3e50;
   cursor: default;
@@ -253,4 +253,112 @@
   .choisir-container { padding: 10px; }
   .calendar-day { font-size: 12px; }
   .slots-grid { grid-template-columns: repeat(2, 1fr); }
+}
+/* Type badges */
+.confirmed-type {
+  margin: 12px 0;
+}
+
+.badge-enligne {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #3b82f6;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-presentiel {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
+}
+
+/* Temps restant */
+.temps-restant {
+  font-size: 14px;
+  color: #f59e0b;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+/* Bouton rejoindre */
+.btn-rejoindre {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 12px 0;
+  transition: all 0.2s;
+  background: #e2e8f0;
+  color: #94a3b8;
+}
+
+.btn-rejoindre.active {
+  background: #7c6af7;
+  color: white;
+  animation: pulse-btn 1.5s infinite;
+}
+
+.btn-rejoindre:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Présentiel info */
+.presentiel-info {
+  margin: 12px 0;
+  padding: 14px 16px;
+  background: #f5f3ff;
+  border-radius: 10px;
+  border: 1px solid #ddd6fe;
+  color: #7c3aed;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes pulse-btn {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124,106,247,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(124,106,247,0); }
+}
+.no-dates-info {
+  text-align: center;
+  padding: 40px 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+  border: 2px dashed #e2e8f0;
+}
+
+.no-dates-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.no-dates-info h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.no-dates-info p {
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.7;
+  max-width: 320px;
+  margin: 0 auto;
 }

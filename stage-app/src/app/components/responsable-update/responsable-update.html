@@ -1,181 +1,161 @@
-<div class="responsable-update-container">
-  
-  <!-- Header -->
-  <div class="header">
-    <h1><i class="fa-solid fa-user-gear"></i> Profil</h1>
-  </div>
+<div class="rup-container">
 
-  <!-- Photo Section -->
-  <div class="photo-section">
-    <div class="photo-container">
-      <div class="photo-upload-wrapper" (click)="photoInput.click()">
-        <img *ngIf="responsablePhoto" [src]="responsablePhoto" alt="Profile Photo" class="profile-photo" />
-        <div *ngIf="!responsablePhoto" class="photo-placeholder">
-          <i class="fa-solid fa-user"></i>
-        </div>
-        <div class="photo-overlay">
-          <i class="fa-solid fa-camera"></i>
-          <p>Cliquez pour changer</p>
-        </div>
-        <input #photoInput type="file" id="photo-input" accept="image/*" hidden (change)="onPhotoSelected($event)" />
-      </div>
-    </div>
-    <div class="photo-info">
-      <p><strong>Changer la photo de profil</strong></p>
-      <p class="text-muted">JPG ou PNG. Max 5MB</p>
-      <div style="margin-top: 15px;">
-        <label for="file-input" style="margin-bottom: 10px; display: block;">
-          <input type="file" id="file-input" accept="image/*" (change)="onPhotoSelected($event)" />
-        </label>
-        <button *ngIf="selectedFile" (click)="uploadPhoto()" class="btn btn-primary">
-          <i class="fa-solid fa-upload"></i> Mettre à jour la photo
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Personal Info Section -->
-  <div class="info-section">
-    <h2><i class="fa-solid fa-id-card"></i> Informations Personnelles</h2>
-    
-    <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="nom">Nom</label>
-          <input 
-            type="text" 
-            id="nom"
-            [(ngModel)]="responsable.nom"
-            name="nom"
-            placeholder="Votre nom"
-          />
-        </div>
-        <div class="form-group">
-          <label for="prenom">Prénom</label>
-          <input 
-            type="text" 
-            id="prenom"
-            [(ngModel)]="responsable.prenom"
-            name="prenom"
-            placeholder="Votre prénom"
-          />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email"
-          [(ngModel)]="responsable.email"
-          name="email"
-          placeholder="votre@email.com"
-        />
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="poste">Poste</label>
-          <input 
-            type="text" 
-            id="poste"
-            [(ngModel)]="responsable.poste"
-            name="poste"
-            placeholder="Votre poste"
-          />
-        </div>
-        <div class="form-group">
-          <label for="department">Département</label>
-          <input 
-            type="text" 
-            id="department"
-            [(ngModel)]="responsable.department"
-            name="department"
-            placeholder="Votre département"
-          />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="service">Service</label>
-        <input 
-          type="text" 
-          id="service"
-          [(ngModel)]="responsable.service"
-          name="service"
-          placeholder="Votre service"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-success btn-lg">
-        <i class="fa-solid fa-save"></i> Mettre à jour les infos
-      </button>
-    </form>
-  </div>
-
-  <!-- Password Section -->
-  <div class="password-section">
-    <h2><i class="fa-solid fa-lock"></i> Sécurité</h2>
-    
-    <form (ngSubmit)="changePassword()" #passwordForm="ngForm">
-      <div class="form-group">
-        <label for="new-password">Nouveau mot de passe</label>
-        <input 
-          type="password" 
-          id="new-password"
-          [(ngModel)]="newPassword"
-          name="newPassword"
-          placeholder="Entrez un nouveau mot de passe"
-          required
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="confirm-password">Confirmer le mot de passe</label>
-        <input 
-          type="password" 
-          id="confirm-password"
-          [(ngModel)]="confirmPassword"
-          name="confirmPassword"
-          placeholder="Confirmez le mot de passe"
-          required
-        />
-      </div>
-
-      <button 
-        type="submit" 
-        class="btn btn-warning"
-        [disabled]="!newPassword || !confirmPassword || newPassword !== confirmPassword"
-      >
-        <i class="fa-solid fa-key"></i> Changer le mot de passe
-      </button>
-      
-      <p class="text-muted" *ngIf="newPassword && confirmPassword && newPassword !== confirmPassword">
-        ⚠️ Les mots de passe ne correspondent pas
-      </p>
-    </form>
-  </div>
-
-  <!-- Delete Account Section -->
-  <div class="delete-section">
-    <h2><i class="fa-solid fa-trash"></i> Zone de danger</h2>
-    <p>Une fois votre compte supprimé, il n'y a pas de retour en arrière. Soyez certain.</p>
-    <button 
-      (click)="deleteAccount()" 
-      class="btn btn-danger"
-      [disabled]="isDeleting"
-    >
-      <i class="fa-solid fa-trash-alt"></i> Supprimer mon compte
-    </button>
-  </div>
-
-  <!-- Messages -->
-  <div *ngIf="successMessage" class="alert alert-success">
+  <!-- Alerts -->
+  <div *ngIf="successMessage" class="rup-alert rup-alert-success">
     <i class="fa-solid fa-check-circle"></i> {{ successMessage }}
   </div>
-
-  <div *ngIf="errorMessage" class="alert alert-error">
+  <div *ngIf="errorMessage" class="rup-alert rup-alert-error">
     <i class="fa-solid fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- ===== CARTE PROFIL ===== -->
+  <div class="rup-profile-card">
+    <div class="rup-profile-banner"></div>
+
+    <div class="rup-profile-body">
+      <!-- Avatar -->
+      <div class="rup-avatar-wrapper" (click)="photoInput.click()">
+        <img *ngIf="responsablePhoto" [src]="responsablePhoto" alt="Photo" class="rup-avatar-img" />
+        <div *ngIf="!responsablePhoto" class="rup-avatar-initials">
+          {{ (responsable.prenom ? responsable.prenom.charAt(0) : '') + (responsable.nom ? responsable.nom.charAt(0) : '') | uppercase }}
+        </div>
+        <div class="rup-avatar-overlay">
+          <i class="fa-solid fa-camera"></i>
+        </div>
+        <span class="rup-online-dot"></span>
+        <input #photoInput type="file" accept="image/*" hidden (change)="onPhotoSelected($event)" />
+      </div>
+
+      <!-- Nom + rôle -->
+      <h2 class="rup-profile-name">{{ responsable.prenom }} {{ responsable.nom }}</h2>
+      <div class="rup-profile-badge">
+        <i class="fa-solid fa-shield-halved"></i> Responsable
+      </div>
+
+      <!-- Bouton upload photo si fichier sélectionné -->
+      <button *ngIf="selectedFile" (click)="uploadPhoto()" class="rup-btn-primary" style="margin-top: 16px;">
+        <i class="fa-solid fa-upload"></i> Mettre à jour la photo
+      </button>
+      <p *ngIf="!selectedFile" class="rup-photo-hint">Cliquez sur la photo pour changer</p>
+    </div>
+  </div>
+
+  <!-- ===== INFORMATIONS PERSONNELLES ===== -->
+  <div class="rup-section">
+    <div class="rup-section-title">
+      <i class="fa-solid fa-id-card"></i> Informations personnelles
+    </div>
+
+    <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
+      <div class="rup-info-list">
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-envelope"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">EMAIL</span>
+            <input type="email" [(ngModel)]="responsable.email" name="email" class="rup-info-input" placeholder="votre@email.com" />
+          </div>
+        </div>
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-user"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">PRÉNOM</span>
+            <input type="text" [(ngModel)]="responsable.prenom" name="prenom" class="rup-info-input" placeholder="Votre prénom" />
+          </div>
+        </div>
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-user"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">NOM</span>
+            <input type="text" [(ngModel)]="responsable.nom" name="nom" class="rup-info-input" placeholder="Votre nom" />
+          </div>
+        </div>
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">POSTE</span>
+            <input type="text" [(ngModel)]="responsable.poste" name="poste" class="rup-info-input" placeholder="Votre poste" />
+          </div>
+        </div>
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-building"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">DÉPARTEMENT</span>
+            <input type="text" [(ngModel)]="responsable.department" name="department" class="rup-info-input" placeholder="Votre département" />
+          </div>
+        </div>
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-sitemap"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">SERVICE</span>
+            <input type="text" [(ngModel)]="responsable.service" name="service" class="rup-info-input" placeholder="Votre service" />
+          </div>
+        </div>
+
+      </div>
+
+      <button type="submit" class="rup-btn-primary rup-btn-full" [disabled]="isLoading">
+        <i class="fa-solid fa-floppy-disk"></i>
+        {{ isLoading ? 'Enregistrement...' : 'Modifier mon profil' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- ===== SÉCURITÉ ===== -->
+  <div class="rup-section">
+    <div class="rup-section-title">
+      <i class="fa-solid fa-lock"></i> Sécurité
+    </div>
+
+    <form (ngSubmit)="changePassword()" #passwordForm="ngForm">
+      <div class="rup-info-list">
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-key"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">NOUVEAU MOT DE PASSE</span>
+            <input type="password" [(ngModel)]="newPassword" name="newPassword"
+              class="rup-info-input" placeholder="••••••••" />
+          </div>
+        </div>
+
+        <div class="rup-info-row">
+          <div class="rup-info-icon"><i class="fa-solid fa-key"></i></div>
+          <div class="rup-info-content">
+            <span class="rup-info-label">CONFIRMER</span>
+            <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword"
+              class="rup-info-input" placeholder="••••••••" />
+          </div>
+        </div>
+
+      </div>
+
+      <p class="rup-mismatch" *ngIf="newPassword && confirmPassword && newPassword !== confirmPassword">
+        <i class="fa-solid fa-triangle-exclamation"></i> Les mots de passe ne correspondent pas
+      </p>
+
+      <button type="submit" class="rup-btn-warning rup-btn-full"
+        [disabled]="!newPassword || !confirmPassword || newPassword !== confirmPassword || isLoading">
+        <i class="fa-solid fa-key"></i> Changer le mot de passe
+      </button>
+    </form>
+  </div>
+
+  <!-- ===== ZONE DANGER ===== -->
+  <div class="rup-section rup-danger-section">
+    <div class="rup-section-title rup-danger-title">
+      <i class="fa-solid fa-trash"></i> Zone de danger
+    </div>
+    <p class="rup-danger-text">Une fois votre compte supprimé, il n'y a pas de retour en arrière.</p>
+    <button (click)="deleteAccount()" class="rup-btn-danger rup-btn-full" [disabled]="isDeleting">
+      <i class="fa-solid fa-trash-alt"></i>
+      {{ isDeleting ? 'Suppression...' : 'Supprimer mon compte' }}
+    </button>
   </div>
 
 </div>

@@ -1,6 +1,5 @@
 <header class="header">
   <div class="header-container">
-    <!-- Logo et Menu Toggle -->
     <div class="header-left">
       <div class="menu-toggle">
         <i class="fas fa-bars"></i>
@@ -10,15 +9,12 @@
       </div>
     </div>
 
-    <!-- Barre de recherche -->
     <div class="search-box">
       <i class="fas fa-search search-icon"></i>
       <input type="text" placeholder="Search..." class="search-input">
     </div>
 
-    <!-- Actions et Profil -->
     <div class="header-right">
-      <!-- Icônes d'actions -->
       <div class="action-icons">
         <div class="action-item">
           <i class="fas fa-th"></i>
@@ -33,17 +29,31 @@
         </div>
       </div>
 
-      <!-- Profil utilisateur -->
-      <div class="user-profile">
-        <div class="user-avatar">
-          <img src="https://ui-avatars.com/api/?name=John+Doe&background=4e73df&color=fff&size=40" alt="User">
-          <span class="online-status"></span>
+      <!-- ✅ Profil + Déconnexion -->
+      <div class="user-section">
+
+        <div class="user-profile">
+
+          <!-- ✅ Photo si disponible, sinon initiales -->
+          <div class="user-avatar-circle" *ngIf="!userPhoto">
+            {{ userInitials }}
+          </div>
+          <img
+            *ngIf="userPhoto"
+            [src]="userPhoto"
+            alt="Photo profil"
+            class="user-avatar-photo"
+            (error)="userPhoto = ''"
+          />
+
+          <span class="user-name">{{ userName }}</span>
         </div>
-        <div class="user-info">
-          <span class="user-name">John Doe</span>
-          <span class="user-role">Administrator</span>
-        </div>
-        <i class="fas fa-chevron-down"></i>
+
+        <button class="btn-logout" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          Déconnexion
+        </button>
+
       </div>
     </div>
   </div>
