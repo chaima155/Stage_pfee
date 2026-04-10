@@ -1,7 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link
-  href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
-  rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
 <div class="myspace-container" *ngIf="!isLoading">
 
@@ -12,10 +10,17 @@
   </div>
 
   <!-- ===== VIEW MODE ===== -->
-  <div class="profile-layout" *ngIf="!isEditing">
+  <div class="parent" *ngIf="!isEditing">
 
-    <!-- LEFT: Avatar Card -->
-    <div class="profile-sidebar">
+    <!-- ✅ DIV2: Calendrier (gauche) -->
+    <div class="div2">
+      <app-choisir-date></app-choisir-date>
+    </div>
+
+    <!-- ✅ DIV1: Profil (droite) -->
+    <div class="div1">
+
+      <!-- Name Card -->
       <div class="sidebar-card">
         <div class="sidebar-cover"></div>
         <div class="sidebar-body">
@@ -39,10 +44,8 @@
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- RIGHT: Info Card -->
-    <div class="profile-main">
+      <!-- Informations personnelles -->
       <div class="info-card">
         <div class="info-card-header">
           <h3><i class="fa-solid fa-id-card"></i> Informations personnelles</h3>
@@ -106,7 +109,9 @@
 
         </div>
       </div>
+
     </div>
+
   </div>
 
   <!-- ===== EDIT MODE ===== -->
@@ -124,7 +129,6 @@
 
       <div class="edit-body">
 
-        <!-- Photo Upload -->
         <div class="section-block">
           <div class="section-title"><i class="fa-solid fa-camera"></i> Photo de profil</div>
           <div class="photo-upload-section">
@@ -142,16 +146,19 @@
                 <i class="fa-solid fa-arrow-up-from-bracket"></i>
                 Changer la photo
               </label>
-              <input type="file" id="photo-input" accept="image/jpeg,image/png,image/gif,image/webp"
-                (change)="onPhotoSelected($event)" style="display: none;" />
+              <input type="file" id="photo-input"
+                     accept="image/jpeg,image/png,image/gif,image/webp"
+                     (change)="onPhotoSelected($event)"
+                     style="display: none;" />
               <p class="hint">JPG, PNG, GIF ou WEBP · Max 5 Mo</p>
             </div>
           </div>
         </div>
 
-        <!-- Personal Info -->
         <div class="section-block">
-          <div class="section-title"><i class="fa-solid fa-circle-user"></i> Informations personnelles</div>
+          <div class="section-title">
+            <i class="fa-solid fa-circle-user"></i> Informations personnelles
+          </div>
           <div class="form-row">
             <div class="form-group">
               <label for="edit-prenom">Prénom</label>
@@ -168,9 +175,10 @@
           </div>
         </div>
 
-        <!-- CV Upload -->
         <div class="section-block">
-          <div class="section-title"><i class="fa-solid fa-file-pdf"></i> Curriculum Vitae</div>
+          <div class="section-title">
+            <i class="fa-solid fa-file-pdf"></i> Curriculum Vitae
+          </div>
           <div class="cv-upload-section">
             <div class="cv-current" *ngIf="user?.CV && !selectedCv">
               <i class="fa-solid fa-file-lines"></i>
@@ -187,19 +195,17 @@
               <i class="fa-solid fa-arrow-up-from-bracket"></i>
               {{ user?.CV ? 'Remplacer le CV' : 'Télécharger un CV' }}
             </label>
-            <input type="file" id="cv-input" accept=".pdf,.doc,.docx" (change)="onCvSelected($event)"
-              style="display: none;" />
+            <input type="file" id="cv-input" accept=".pdf,.doc,.docx"
+                   (change)="onCvSelected($event)" style="display: none;" />
             <p class="hint">PDF, DOC ou DOCX · Max 10 Mo</p>
           </div>
         </div>
 
-        <!-- Error -->
         <div class="error-banner" *ngIf="errorMessage">
           <i class="fa-solid fa-circle-exclamation"></i>
           {{ errorMessage }}
         </div>
 
-        <!-- Actions -->
         <div class="edit-actions">
           <button class="btn-cancel-edit" (click)="cancelEditing()">
             <i class="fa-solid fa-xmark"></i> Annuler
@@ -214,6 +220,7 @@
       </div>
     </div>
   </div>
+
 </div>
 
 <!-- Loading -->

@@ -12,10 +12,11 @@ import com.project.backend.service.AiService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/candidatures")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class CandidatureController {
 
     private final CandidatureRepository candidatureRepository;
@@ -136,4 +137,81 @@ public class CandidatureController {
                     .body("Erreur: " + e.getMessage());
         }
     }
-}
+    @GetMapping("/candidate/{candidateId}/peut-choisir")
+    public ResponseEntity<?> peutChoisirDate(@PathVariable Long candidateId) {
+        try {
+            List<Candidature> candidatures = candidatureRepository
+                    .findByCandidate_Id(candidateId);
+
+            if (candidatures.isEmpty()) {
+                return ResponseEntity.ok(Map.of(
+                        "peutChoisir", false,
+                        "raison", "Aucune candidature trouvée"
+                ));
+            }
+
+            List<Entretien> tousEntretiens = entretienRepository.findAll();
+
+            // ✅ Trier par ID décroissant — prendre la plus récente
+            List<Candidature> validees = candidatures.stream()
+                    .filter(c -> "VALIDEE".equals(c.getStatut()))
+                    .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                    .collect(Collectors.toList());
+
+            if (validees.isEmpty()) {
+                return ResponseEntity.ok(Map.of(
+                        "peutChoisir", false,
+                        "raison", "CV non validé par l'IA"
+                ));
+            }
+
+            for (Candidature candidatureValidee : validees) {
+
+                // ✅ Chercher entretien lié à cette candidature
+                Entretien entretienExistant = tousEntretiens.stream()
+                        .filter(e -> e.getCandidature() != null &&
+                                e.getCandidature().getId().equals(candidatureValidee.getId()))
+                        .findFirst()
+                        .orElse(null);
+
+                // ✅ Pas d'entretien lié — peut choisir
+                if (entretienExistant == null) {
+                    return ResponseEntity.ok(Map.of(
+                            "peutChoisir",   true,
+                            "candidatureId", candidatureValidee.getId(),
+                            "raison",        "Aucun entretien planifié"
+                    ));
+                }
+
+                // ✅ Entretien terminé (resultat non null) — peut rechoisir
+                // SEULEMENT si cette candidature est la plus récente VALIDEE
+                if (entretienExistant.getResultat() != null) {
+                    return ResponseEntity.ok(Map.of(
+                            "peutChoisir",     true,
+                            "candidatureId",   candidatureValidee.getId(),
+                            "raison",          "Entretien terminé — nouvelle candidature validée",
+                            "dernierResultat", entretienExistant.getResultat()
+                    ));
+                }
+
+                // ✅ Entretien planifié mais pas encore terminé
+                return ResponseEntity.ok(Map.of(
+                        "peutChoisir",   false,
+                        "candidatureId", candidatureValidee.getId(),
+                        "dateExistante", entretienExistant.getDate().toString(),
+                        "raison",        "Entretien déjà planifié"
+                ));
+            }
+
+            return ResponseEntity.ok(Map.of(
+                    "peutChoisir", false,
+                    "raison", "Aucune candidature valide"
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur: " + e.getMessage());
+        }
+    }
+
+}

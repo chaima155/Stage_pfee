@@ -19,6 +19,7 @@ public class ResponsableStage extends User {
     @JsonProperty("service")
     private String service;
 
+
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }
 
@@ -27,5 +28,6 @@ public class ResponsableStage extends User {
 
     public String getService() { return service; }
     public void setService(String service) { this.service = service; }
+
 
 }

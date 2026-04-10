@@ -1,65 +1,124 @@
-<div class="stage-container">
+<div class="parent">
 
-  <h1 class="page-title">OFFRES À LA UNE</h1>
+  <!-- SIDEBAR: Recherche & Filtres -->
+  <div class="div2">
+    <h2 class="sidebar-title">Filtres</h2>
 
-  <div *ngIf="loading" class="loading">⏳ Chargement des offres...</div>
+    <div class="search-group">
+      <label class="filter-label">Recherche</label>
+      <div class="search-wrapper">
+        <i class="fa fa-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Ex: Java, Spring..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+    </div>
 
-  <div *ngIf="!loading && sujets.length === 0" class="no-offers">
-    Aucune offre disponible pour le moment.
+    <div class="filter-group">
+      <label class="filter-label">Mots clés</label>
+      <div class="tags-filter">
+        <span
+          class="filter-tag"
+          *ngFor="let tag of allMotsCles"
+          [class.active]="selectedMotsCles.includes(tag)"
+          (click)="toggleMotsCle(tag)"
+        >
+          {{ tag }}
+        </span>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Technologies</label>
+      <div class="tags-filter">
+        <span
+          class="filter-tag"
+          *ngFor="let tech of allTechnologies"
+          [class.active]="selectedTechnologies.includes(tech)"
+          (click)="toggleTechnology(tech)"
+        >
+          {{ tech }}
+        </span>
+      </div>
+    </div>
+
+    <button class="btn-reset" (click)="resetFilters()">
+      <i class="fa fa-times"></i> Réinitialiser
+    </button>
   </div>
 
-  <div class="offers-list" *ngIf="!loading">
-    <div class="offer-card" *ngFor="let sujet of sujets">
+  <!-- MAIN: Liste des offres -->
+  <div class="div1">
+    <h1 class="page-title">OFFRES À LA UNE</h1>
 
-      <!-- Badge recommandé -->
-      <div class="badge-recommended">
-        ✦ Offre recommandée
-      </div>
+    <div *ngIf="loading" class="loading">⏳ Chargement des offres...</div>
 
-      <!-- Date -->
-      <div class="offer-date">
-        {{ sujet.datePublication || '01 mars, 2026' }}
-      </div>
+    <div class="results-bar" *ngIf="!loading">
+      <span class="results-count">
+        <strong>{{ filteredSujets.length }}</strong>
+        {{ filteredSujets.length === 1 ? 'offre trouvée' : 'offres trouvées' }}
+      </span>
+      <span class="results-total" *ngIf="filteredSujets.length !== sujets.length">
+        sur {{ sujets.length }} au total
+      </span>
+    </div>
 
-      <div class="offer-body">
+    <div *ngIf="!loading && filteredSujets.length === 0" class="no-offers">
+      <div class="no-offers-icon">🔍</div>
+      <p>Aucune offre ne correspond à vos critères.</p>
+      <button class="btn-reset-inline" (click)="resetFilters()">Réinitialiser les filtres</button>
+    </div>
 
-        <!-- Logo -->
-        <div class="offer-logo">
-          <div class="logo-placeholder">{{ sujet.titre?.charAt(0) }}</div>
+    <div class="offers-list" *ngIf="!loading && filteredSujets.length > 0">
+      <div class="offer-card" *ngFor="let sujet of filteredSujets">
+
+        <div class="badge-recommended">✦ Recommandée</div>
+
+        <div class="offer-date">
+          {{ sujet.datePublication || '01 mars, 2026' }}
         </div>
 
-        <!-- Contenu -->
-        <div class="offer-content">
-          <span class="offer-type">STAGE</span>
-          <h2 class="offer-title">{{ sujet.titre }}</h2>
-
-          <div class="offer-meta">
-            <span class="offer-company">
-              <i class="fa fa-building"></i> {{ sujet.entreprise || 'Entreprise' }}
-            </span>
-            <span class="offer-location">
-              <i class="fa fa-map-marker"></i> {{ sujet.localisation || 'Tunisie' }}
-            </span>
+        <div class="offer-body">
+          <div class="offer-logo">
+            <div class="logo-placeholder">{{ sujet.titre?.charAt(0) }}</div>
           </div>
 
-          <p class="offer-desc">{{ sujet.description | slice:0:200 }}...</p>
+          <div class="offer-content">
+            <span class="offer-type">STAGE</span>
+            <h2 class="offer-title">{{ sujet.titre }}</h2>
 
-          <p class="offer-duree">
-            <strong>Durée (Mois):</strong> {{ sujet.duree }}
-          </p>
+            <div class="offer-meta">
+              <span class="offer-company">
+                <i class="fa fa-building"></i> {{ sujet.entreprise || 'Entreprise' }}
+              </span>
+              <span class="offer-location">
+                <i class="fa fa-map-marker"></i> {{ sujet.localisation || 'Tunisie' }}
+              </span>
+            </div>
 
-          <div class="offer-tags">
-            <span class="tag" *ngFor="let tag of sujet.motsCles?.split(',')">
-              {{ tag.trim() }}
-            </span>
+            <p class="offer-desc">{{ sujet.description | slice:0:200 }}...</p>
+
+            <p class="offer-duree">
+              <strong>Durée :</strong> {{ sujet.duree }} mois
+            </p>
+
+            <div class="offer-tags">
+              <span class="tag" *ngFor="let tag of sujet.motsCles?.split(',')">
+                {{ tag.trim() }}
+              </span>
+            </div>
+
+            <button class="btn-voir" (click)="router.navigate(['/stages', sujet.id])">
+              Voir l'offre →
+            </button>
           </div>
-
-          <button class="btn-voir" (click)="router.navigate(['/stages', sujet.id])">
-            Voir l'offre →
-          </button>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 

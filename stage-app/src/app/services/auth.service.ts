@@ -85,4 +85,7 @@ export class AuthService {
         const filename = parts[parts.length - 1];
         return `${this.apiUrl}/cv/${filename}`;
     }
+    forgotPassword(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/forgot-password`, { email });
+}
 }

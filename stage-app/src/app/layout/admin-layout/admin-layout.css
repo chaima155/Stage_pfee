@@ -5,7 +5,7 @@
     margin-top: 70px;          /* Hauteur du header */
     margin-bottom: 60px;       /* Hauteur du footer */
     min-height: calc(100vh - 130px);
-    background: #f8f9fc;
+    background: #FFFFFF;
     padding: 0;
     z-index: 1;
 }

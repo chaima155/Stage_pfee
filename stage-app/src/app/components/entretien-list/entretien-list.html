@@ -5,7 +5,10 @@
       <th>📅 Date</th>
       <th>🕐 Heure</th>
       <th>👤 Candidat</th>
-      <th>📌 Statut</th>
+      <th>🎯 Type</th>
+      <th>📌 Disponibilité</th>
+      <th>🏆 Résultat</th>
+      <th>⚡ Décision</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -15,7 +18,7 @@
       <td>{{ e.date | date:'dd/MM/yyyy' }}</td>
       <td>{{ e.date | date:'HH:mm' }}</td>
 
-      <!-- ✅ Colonne candidat -->
+      <!-- Candidat -->
       <td>
         <ng-container *ngIf="e.candidature?.candidate; else noCandidat">
           <div class="candidate-info">
@@ -32,27 +35,80 @@
         </ng-template>
       </td>
 
-      <!-- Statut -->
+      <!-- Type entretien -->
       <td>
-        <span class="badge-disponible"   *ngIf="e.disponible">✅ Disponible</span>
-        <span class="badge-indisponible" *ngIf="!e.disponible">❌ Non disponible</span>
+        <span class="badge-enligne"    *ngIf="isEnLigne(e)">🖥️ En ligne</span>
+        <span class="badge-presentiel" *ngIf="isPresentiel(e)">🏢 Présentiel</span>
+        <span class="no-candidate"     *ngIf="!e.candidature?.typeEntretien">—</span>
+      </td>
+
+      <!-- Disponibilité -->
+      <td>
+        <span class="badge-disponible"   *ngIf="e.disponible"> Dispo</span>
+        <span class="badge-indisponible" *ngIf="!e.disponible"> Non dispo</span>
+      </td>
+
+      <!-- Résultat -->
+      <td>
+        <span class="badge-accepte"  *ngIf="e.resultat === 'ACCEPTE'"> Accepté</span>
+        <span class="badge-refuse"   *ngIf="e.resultat === 'REFUSE'"> Refusé</span>
+        <span class="badge-en-cours" *ngIf="!e.resultat && !e.disponible">⏳ En attente</span>
+        <span class="badge-vide"     *ngIf="!e.resultat && e.disponible">—</span>
+      </td>
+
+      <!-- Décision -->
+      <td>
+        <ng-container *ngIf="peutDecider(e); else decisionFaite">
+          <div class="decision-btns">
+            <button class="btn-accepter"
+                    (click)="envoyerDecision(e, 'ACCEPTE')"
+                    [disabled]="e.sending">
+              ✅ Accepter
+            </button>
+            <button class="btn-refuser"
+                    (click)="envoyerDecision(e, 'REFUSE')"
+                    [disabled]="e.sending">
+              ❌ Refuser
+            </button>
+          </div>
+        </ng-container>
+        <ng-template #decisionFaite>
+          <span class="no-candidate">—</span>
+        </ng-template>
       </td>
 
       <td class="actions">
+
+        <!-- ✅ Temps restant — seulement enligne -->
+        <div class="temps-restant"
+             *ngIf="isEnLigne(e) && !e.disponible && e.date && !canJoin(e) && !e.resultat">
+          ⏳ {{ getTempsRestant(e) }}
+        </div>
+
+        <!-- ✅ Bouton rejoindre — seulement enligne -->
+        <button class="btn-join"
+                [class.btn-active]="canJoin(e)"
+                (click)="joinCall(e)"
+                [disabled]="!canJoin(e)"
+                *ngIf="isEnLigne(e) && !e.disponible">
+          {{ canJoin(e) ? '📹 Rejoindre' : '🔒 Fermé' }}
+        </button>
+
+        <!-- ✅ Présentiel — pas de bouton rejoindre -->
+        <span class="badge-presentiel" *ngIf="isPresentiel(e) && !e.disponible">
+          🏢 Sur place
+        </span>
+
         <button class="btn-delete" (click)="deleteEntretien(e.id)">
           🗑 Supprimer
         </button>
+
       </td>
     </tr>
   </tbody>
 </table>
 
-<!-- Chargement -->
-<div *ngIf="loading" class="loading">
-  <p>Chargement...</p>
-</div>
-
-<!-- Aucun entretien -->
+<div *ngIf="loading" class="loading"><p>Chargement...</p></div>
 <div *ngIf="!loading && entretiens.length === 0" class="empty">
   <p>Aucun entretien trouvé.</p>
 </div>

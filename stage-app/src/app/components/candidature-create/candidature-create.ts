@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';  // ✅
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,8 +20,8 @@ export class CandidatureCreate implements OnInit {
   loading: boolean = false;
   analysisResult: any = null;
   submitted: boolean = false;
-  isSubmitting: boolean = false;      // ✅ Ajouter
-  errorMessage: string = '';          // ✅ Ajouter
+  isSubmitting: boolean = false;
+  errorMessage: string = '';
 
   candidateId: number = Number(localStorage.getItem('candidateId'));
 
@@ -30,11 +30,19 @@ export class CandidatureCreate implements OnInit {
     public router: Router,
     private candidatureService: CandidatureService,
     private sujetService: SujetStageService,
-    private cdr: ChangeDetectorRef    // ✅ Ajouter
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     const sujetId = Number(this.route.snapshot.paramMap.get('id'));
+
+    // ✅ Si candidat non connecté → sauvegarder le sujet et rediriger vers login
+    if (!this.candidateId) {
+      localStorage.setItem('redirectSujetId', sujetId.toString());
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.sujetService.getSujetById(sujetId).subscribe({
       next: (data) => this.sujet = data,
       error: (err) => console.error('Erreur chargement sujet:', err)
@@ -44,8 +52,11 @@ export class CandidatureCreate implements OnInit {
   postuler(): void {
     if (!this.typeEntretien || !this.sujet?.id) return;
 
+    // ✅ Vérifier encore une fois avant de postuler
     if (!this.candidateId) {
-      console.error('Candidat non connecté');
+      const sujetId = this.sujet.id;
+      localStorage.setItem('redirectSujetId', sujetId.toString());
+      this.router.navigate(['/login']);
       return;
     }
 

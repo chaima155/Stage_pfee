@@ -24,7 +24,7 @@ export class VideoCall implements OnInit, AfterViewInit, OnDestroy {
   private localStream: MediaStream | null = null;
   private stompClient: Client | null = null;
   private cameraReady: boolean = false;
-
+  private pendingIceCandidates: RTCIceCandidateInit[] = [];
   // ── État appel ──
   roomName: string = '';
   isLoading: boolean = true;
@@ -193,46 +193,69 @@ export class VideoCall implements OnInit, AfterViewInit, OnDestroy {
   // ══════════════════════════════════════
 
   async startCamera(): Promise<void> {
+  try {
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(t => t.stop());
+    }
+
+    this.localStream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 640, height: 480 },
+      audio: true
+    });
+    console.log('✅ Stream obtenu');
+
+  } catch (err: any) {
+    console.warn('⚠️ Erreur caméra:', err.name);
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 640, height: 480 },
-        audio: true
+        video: false, audio: true
       });
-      console.log('✅ Stream obtenu');
-    } catch (err: any) {
-      console.warn('⚠️ Erreur caméra:', err.name);
-      try {
-        this.localStream = await navigator.mediaDevices.getUserMedia({
-          video: false, audio: true
-        });
-        console.log('✅ Audio seulement');
-      } catch {
-        this.localStream = null;
-        console.warn('⚠️ Aucun périphérique');
+    } catch {
+      this.localStream = null;
+    }
+  }
+
+  this.isLoading = false;
+  this.isCallActive = true;
+  this.callStartTime = new Date();
+  this.startTimer();
+  this.cdr.detectChanges();
+
+  setTimeout(async () => {
+    this.assignLocalStream();
+
+    // ✅ Démarrer monitoring seulement si caméra disponible
+    if (!this.isResponsable && this.localVideoRef?.nativeElement) {
+      const video = this.localVideoRef.nativeElement;
+
+      // ✅ Attendre que la vidéo ait des dimensions
+      const waitForVideo = () => new Promise<void>(resolve => {
+        const check = setInterval(() => {
+          if (video.videoWidth > 0 && video.videoHeight > 0) {
+            clearInterval(check);
+            resolve();
+          }
+        }, 500);
+        // ✅ Timeout après 10 secondes
+        setTimeout(() => { clearInterval(check); resolve(); }, 10000);
+      });
+
+      await waitForVideo();
+
+      if (video.videoWidth > 0 && video.videoHeight > 0) {
+        await this.attentionGuard.initialize();
+        this.attentionGuard.startMonitoring(
+          video,
+          (event: AlertEvent) => this.handleAlert(event)
+        );
+      } else {
+        console.warn('⚠️ Caméra non disponible — monitoring désactivé');
       }
     }
 
-    this.isLoading = false;
-    this.isCallActive = true;
-    this.callStartTime = new Date();
-    this.startTimer();
     this.cdr.detectChanges();
-
-    setTimeout(async () => {
-      this.assignLocalStream();
-
-      // Démarrer AttentionGuard uniquement pour le candidat
-      if (!this.isResponsable && this.localVideoRef?.nativeElement) {
-        await this.attentionGuard.initialize();
-        this.attentionGuard.startMonitoring(
-          this.localVideoRef.nativeElement,
-          (event: AlertEvent) => this.handleAlert(event)
-        );
-      }
-
-      this.cdr.detectChanges();
-    }, 800);
-  }
+  }, 800);
+}
 
   assignLocalStream(): void {
     if (!this.localStream) return;
@@ -255,6 +278,7 @@ export class VideoCall implements OnInit, AfterViewInit, OnDestroy {
   // ══════════════════════════════════════
 
   createPeerConnection(): void {
+    this.pendingIceCandidates = [];
     this.peerConnection = new RTCPeerConnection(this.iceServers);
 
     if (this.localStream) {
@@ -296,6 +320,7 @@ export class VideoCall implements OnInit, AfterViewInit, OnDestroy {
   async handleOffer(sdp: RTCSessionDescriptionInit): Promise<void> {
     this.createPeerConnection();
     await this.peerConnection!.setRemoteDescription(new RTCSessionDescription(sdp));
+    await this.flushPendingIceCandidates();
     const answer = await this.peerConnection!.createAnswer();
     await this.peerConnection!.setLocalDescription(answer);
     this.sendSignal('answer', { sdp: answer });
@@ -303,15 +328,37 @@ export class VideoCall implements OnInit, AfterViewInit, OnDestroy {
 
   async handleAnswer(sdp: RTCSessionDescriptionInit): Promise<void> {
     await this.peerConnection!.setRemoteDescription(new RTCSessionDescription(sdp));
+    await this.flushPendingIceCandidates();
   }
 
-  async handleIceCandidate(candidate: RTCIceCandidateInit): Promise<void> {
+  // ✅ Corriger handleIceCandidate()
+async handleIceCandidate(candidate: RTCIceCandidateInit): Promise<void> {
+  try {
+    if (
+      this.peerConnection &&
+      this.peerConnection.remoteDescription &&
+      this.peerConnection.remoteDescription.type
+    ) {
+      await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    } else {
+      // ✅ Mettre en buffer
+      this.pendingIceCandidates.push(candidate);
+    }
+  } catch (err) {
+    console.warn('ICE error:', err);
+  }
+}
+// ✅ Ajouter flushPendingIceCandidates()
+private async flushPendingIceCandidates(): Promise<void> {
+  for (const candidate of this.pendingIceCandidates) {
     try {
       await this.peerConnection!.addIceCandidate(new RTCIceCandidate(candidate));
     } catch (err) {
-      console.error('ICE error:', err);
+      console.warn('ICE flush error:', err);
     }
   }
+  this.pendingIceCandidates = [];
+}
 
   // ══════════════════════════════════════
   // CONTROLES

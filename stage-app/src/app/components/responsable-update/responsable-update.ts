@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ResponsableService, Responsable } from '../../services/responsable';
 
-
-
 @Component({
   selector: 'app-responsable-update',
   standalone: true,
@@ -13,7 +11,6 @@ import { ResponsableService, Responsable } from '../../services/responsable';
   styleUrl: './responsable-update.css',
 })
 export class ResponsableUpdate implements OnInit {
-  // ===== PROPERTIES =====
 
   responsable: Responsable = {
     email: '',
@@ -46,41 +43,63 @@ export class ResponsableUpdate implements OnInit {
 
   // ===== LOAD DATA =====
 
-  /**
-   * Load current responsable data
-   */
   private loadResponsableData(): void {
     this.isLoading = true;
-    console.log('📍 Loading responsable data...');
 
-    this.responsableService.getCurrentResponsable().subscribe({
+    const stored = localStorage.getItem('currentResponsable');
+
+    if (!stored) {
+      this.isLoading = false;
+      this.errorMessage = 'Session expirée. Veuillez vous reconnecter.';
+      return;
+    }
+
+    const responsable = JSON.parse(stored);
+
+    if (!responsable.id) {
+      this.isLoading = false;
+      this.errorMessage = 'Session invalide. Veuillez vous reconnecter.';
+      localStorage.clear();
+      return;
+    }
+
+    this.responsable = responsable;
+    this.isLoading = false;
+
+    if (responsable.photo) {
+      this.photoTimestamp = new Date().getTime();
+      this.responsablePhoto = this.responsableService.getPhotoUrl(
+        responsable.photo, this.photoTimestamp
+      );
+    }
+
+    // ✅ Rafraîchir depuis le serveur
+    this.responsableService.getResponsableById(responsable.id).subscribe({
       next: (data) => {
-        console.log('✓ Responsable data loaded:', data);
         this.responsable = data;
 
-        // Load photo if exists - with cache busting
+        // ✅ Sauvegarder + notifier le header
+        localStorage.setItem('currentResponsable', JSON.stringify(data));
+        window.dispatchEvent(new Event('storage'));
+
+        this.responsableService.updateResponsableSession(data);
+
         if (data.photo) {
           this.photoTimestamp = new Date().getTime();
-          // 👈 PASS THE TIMESTAMP TO getPhotoUrl()
-          this.responsablePhoto = this.responsableService.getPhotoUrl(data.photo, this.photoTimestamp);
-          console.log('✓ Photo URL:', this.responsablePhoto);
+          this.responsablePhoto = this.responsableService.getPhotoUrl(
+            data.photo, this.photoTimestamp
+          );
         }
-
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('✗ Error loading responsable data:', err);
-        this.errorMessage = 'Failed to load profile data';
+      error: () => {
         this.isLoading = false;
-      },
+      }
     });
   }
 
   // ===== PROFILE UPDATE =====
 
-  /**
-   * Update responsable profile
-   */
   updateProfile(): void {
     if (!this.responsable.id) {
       console.error('❌ No responsable ID');
@@ -95,14 +114,16 @@ export class ResponsableUpdate implements OnInit {
       next: (updated) => {
         console.log('✓ Profile updated successfully:', updated);
         this.responsable = updated;
+
+        // ✅ Sauvegarder + notifier le header immédiatement
+        localStorage.setItem('currentResponsable', JSON.stringify(updated));
+        window.dispatchEvent(new Event('storage'));
+
         this.successMessage = 'Profile updated successfully!';
         this.errorMessage = '';
         this.isLoading = false;
 
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+        setTimeout(() => { this.successMessage = ''; }, 3000);
       },
       error: (err) => {
         console.error('✗ Error updating profile:', err);
@@ -114,26 +135,18 @@ export class ResponsableUpdate implements OnInit {
 
   // ===== PHOTO MANAGEMENT =====
 
-  /**
-   * Handle photo file selection
-   */
   onPhotoSelected(event: any): void {
     const file: File = event.target.files[0];
 
-    if (!file) {
-      console.log('No file selected');
-      return;
-    }
+    if (!file) return;
 
     console.log('📷 Photo selected:', file.name);
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       this.errorMessage = 'Please select an image file (JPG, PNG, etc.)';
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       this.errorMessage = 'File size exceeds 5MB limit';
       return;
@@ -141,7 +154,6 @@ export class ResponsableUpdate implements OnInit {
 
     this.selectedFile = file;
 
-    // Show preview
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.responsablePhoto = e.target.result;
@@ -150,9 +162,6 @@ export class ResponsableUpdate implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  /**
-   * Upload selected photo
-   */
   uploadPhoto(): void {
     if (!this.selectedFile || !this.responsable.id) {
       this.errorMessage = 'No file selected or unable to get responsable ID';
@@ -169,23 +178,23 @@ export class ResponsableUpdate implements OnInit {
       next: (updated) => {
         console.log('✓ Photo uploaded successfully:', updated);
         this.responsable = updated;
-        this.successMessage = 'Photo uploaded successfully!';
-        this.errorMessage = '';
         this.selectedFile = null;
         this.isLoading = false;
 
-        // Update photo URL with NEW timestamp
         if (updated.photo) {
-          this.photoTimestamp = new Date().getTime(); // 👈 NEW TIMESTAMP
-          // 👈 PASS THE TIMESTAMP TO getPhotoUrl()
+          this.photoTimestamp = new Date().getTime();
           this.responsablePhoto = this.responsableService.getPhotoUrl(updated.photo, this.photoTimestamp);
-          console.log('✓ New photo URL with cache buster:', this.responsablePhoto);
+          console.log('✓ New photo URL:', this.responsablePhoto);
         }
 
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+        // ✅ Sauvegarder + notifier le header pour mettre à jour la photo
+        localStorage.setItem('currentResponsable', JSON.stringify(updated));
+        window.dispatchEvent(new Event('storage'));
+
+        this.successMessage = 'Photo uploaded successfully!';
+        this.errorMessage = '';
+
+        setTimeout(() => { this.successMessage = ''; }, 3000);
       },
       error: (err) => {
         console.error('✗ Error uploading photo:', err);
@@ -198,9 +207,6 @@ export class ResponsableUpdate implements OnInit {
 
   // ===== PASSWORD CHANGE =====
 
-  /**
-   * Change password
-   */
   changePassword(): void {
     if (!this.responsable.id) {
       console.error('❌ No responsable ID');
@@ -235,10 +241,7 @@ export class ResponsableUpdate implements OnInit {
         this.confirmPassword = '';
         this.isLoading = false;
 
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+        setTimeout(() => { this.successMessage = ''; }, 3000);
       },
       error: (err) => {
         console.error('✗ Error changing password:', err);
@@ -250,9 +253,6 @@ export class ResponsableUpdate implements OnInit {
 
   // ===== ACCOUNT DELETION =====
 
-  /**
-   * Delete account
-   */
   deleteAccount(): void {
     if (!this.responsable.id) {
       console.error('❌ No responsable ID');
@@ -263,9 +263,7 @@ export class ResponsableUpdate implements OnInit {
       'Are you sure you want to delete your account? This action cannot be undone.'
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     console.log('🗑️ Deleting account...');
     this.isDeleting = true;
@@ -276,10 +274,7 @@ export class ResponsableUpdate implements OnInit {
         this.successMessage = 'Account deleted successfully. Redirecting...';
         this.isDeleting = false;
 
-        // Redirect to home after 2 seconds
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
+        setTimeout(() => { window.location.href = '/'; }, 2000);
       },
       error: (err) => {
         console.error('✗ Error deleting account:', err);
@@ -289,11 +284,6 @@ export class ResponsableUpdate implements OnInit {
     });
   }
 
-  // ===== UTILITY METHODS =====
-
-  /**
-   * Clear messages
-   */
   clearMessages(): void {
     this.successMessage = '';
     this.errorMessage = '';

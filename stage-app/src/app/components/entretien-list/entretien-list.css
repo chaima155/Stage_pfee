@@ -11,7 +11,7 @@
 
 /* Header du tableau */
 .entretien-table thead {
-  background: linear-gradient(90deg,#5b7cfa,#7b4bb7);
+  background: linear-gradient(90deg,#5b7cfa, #4a90e2);
   color: white;
 }
 
@@ -83,4 +83,108 @@
     padding: 12px;
     font-size: 13px;
   }
+}
+.badge-accepte {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #1a3a2a;
+  color: #4caf50;
+}
+
+.badge-refuse {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #2a1a1a;
+  color: #f44336;
+}
+
+.badge-en-cours {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #2a2000;
+  color: #ffc107;
+}
+
+.badge-vide {
+  color: #555;
+  font-style: italic;
+}
+/* ✅ Boutons décision */
+.decision-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-accepter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #1a3a2a;
+  color: #4caf50;
+  border: 1px solid #2e6b4a;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-accepter:hover {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-refuser {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #2a1a1a;
+  color: #f44336;
+  border: 1px solid #5a2a2a;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-refuser:hover {
+  background: #f44336;
+  color: white;
+}
+
+.btn-accepter:disabled,
+.btn-refuser:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.badge-enligne {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #1a2a4a;
+  color: #64b5f6;
+  white-space: nowrap;
+}
+
+.badge-presentiel {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #2a1a4a;
+  color: #ce93d8;
+  white-space: nowrap;
 }

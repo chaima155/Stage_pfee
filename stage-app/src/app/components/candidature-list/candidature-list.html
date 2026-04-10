@@ -1,0 +1,119 @@
+<div class="cl-wrapper">
+
+  <!-- HEADER -->
+  <div class="cl-header">
+    <div class="cl-header-left">
+      <h1>📋 Liste des Candidatures</h1>
+      <span class="cl-count">{{ filtered.length }} candidature(s)</span>
+    </div>
+  </div>
+
+  <!-- FILTRES -->
+  <div class="cl-filters">
+    <input class="cl-search"
+           [(ngModel)]="searchText"
+           (ngModelChange)="filter()"
+           placeholder="🔍 Rechercher candidat ou sujet..."/>
+
+    <select class="cl-select"
+            [(ngModel)]="selectedStatut"
+            (ngModelChange)="filter()">
+      <option value="">Tous les statuts</option>
+      <option value="VALIDEE">✅ Validée</option>
+      <option value="REJETEE">❌ Rejetée</option>
+    </select>
+  </div>
+
+  <!-- LOADING -->
+  <div class="cl-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- TABLE -->
+  <div class="cl-table-wrapper" *ngIf="!loading">
+    <table class="cl-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>👤 Candidat</th>
+          <th>📌 Sujet</th>
+          <th>🎯 Type</th>
+          <th>🤖 Score IA</th>
+          <th>📊 Statut</th>
+          <th>💬 Commentaire IA</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Aucun résultat -->
+        <tr *ngIf="filtered.length === 0">
+          <td colspan="7" class="cl-empty">😕 Aucune candidature trouvée</td>
+        </tr>
+
+        <tr *ngFor="let c of filtered; let i = index">
+
+          <!-- # -->
+          <td>{{ i + 1 }}</td>
+
+          <!-- Candidat -->
+          <td>
+            <div class="candidate-info">
+              <span class="candidate-name">
+                {{ c.candidate?.prenom }} {{ c.candidate?.nom }}
+              </span>
+              <span class="candidate-email">
+                {{ c.candidate?.email }}
+              </span>
+            </div>
+          </td>
+
+          <!-- Sujet -->
+          <td>
+            <div class="sujet-info">
+              <span class="sujet-titre">{{ c.sujetStage?.titre || '—' }}</span>
+            </div>
+          </td>
+
+          <!-- Type -->
+          <td>
+            <span class="type-badge" [ngClass]="getTypeClass(c.typeEntretien)">
+              {{ getTypeLabel(c.typeEntretien) }}
+            </span>
+          </td>
+
+          <!-- Score IA -->
+          <td>
+            <div class="score-wrapper">
+              <div class="score-bar">
+                <div class="score-fill"
+                     [style.width.%]="c.scoreAI"
+                     [class.score-high]="c.scoreAI >= 70"
+                     [class.score-mid]="c.scoreAI >= 40 && c.scoreAI < 70"
+                     [class.score-low]="c.scoreAI < 40">
+                </div>
+              </div>
+              <span class="score-text">{{ c.scoreAI }}/100</span>
+            </div>
+          </td>
+
+          <!-- Statut -->
+          <td>
+            <span class="statut-badge" [ngClass]="getStatutClass(c.statut)">
+              {{ c.statut === 'VALIDEE' ? '✅ Validée' : '❌ Rejetée' }}
+            </span>
+          </td>
+
+          <!-- Commentaire IA -->
+          <td>
+            <span class="commentaire">
+              {{ c.commentaireAI | slice:0:60 }}{{ c.commentaireAI?.length > 60 ? '...' : '' }}
+            </span>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

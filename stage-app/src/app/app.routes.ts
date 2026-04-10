@@ -20,7 +20,9 @@ import { MySpaceComponent } from './components/my-space/my-space';
 import { StageDetail } from './pages/stage-detail/stage-detail';
 import { EntretienList } from './components/entretien-list/entretien-list';
 import { VideoCall } from './components/video-call/video-call';
-
+import { CandidatureList } from './components/candidature-list/candidature-list';
+import { ResponsableUpdate } from './components/responsable-update/responsable-update';
+import { VerifyEmailComponent } from './components/verify-email/verify-email';
 
 
 export const routes: Routes = [
@@ -33,10 +35,13 @@ export const routes: Routes = [
   { path: 'register-responsable', component: ResponsableForm },
   { path: 'login', component: LoginComponent },
   { path: 'my-space', component: MySpaceComponent, canActivate: [authGuard] },
-  { path: 'candidature/create/:id', component: CandidatureCreate },
+
+  // ✅ Protégé — candidat doit être connecté pour postuler
+  { path: 'candidature/create/:id', component: CandidatureCreate, canActivate: [authGuard] },
+
   { path: 'choisir-date', component: ChoisirDate },
   { path: 'video-call', component: VideoCall },
-
+  { path: 'verify-email', component: VerifyEmailComponent },
   {
     path: 'dashbord',
     component: AdminLayout,
@@ -48,10 +53,11 @@ export const routes: Routes = [
       { path: 'sidebar', component: Sidebar},
       { path: 'footer', component: Footer},
       { path: 'entretien/create', component: EntretienCreate },
-      { path: 'entretien/list', component: EntretienList }
-// 
+      { path: 'entretien/list', component: EntretienList },
+      { path: 'candidature/list', component: CandidatureList },
+      { path: 'responsable-edite', component: ResponsableUpdate }
     ]
   }
+];
 
-    ];
 export const appRouterProviders = [provideRouter(routes)];

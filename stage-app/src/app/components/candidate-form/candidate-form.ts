@@ -92,22 +92,21 @@ export class CandidateFormComponent {
       .registerCandidate(candidateData, this.selectedFile || undefined)
       .subscribe({
         next: (response) => {
-          console.log('SUCCESS:', response);
-          this.isSubmitting = false;
-          this.successMessage = 'Candidature enregistrée avec succès ! Redirection...';
-          this.candidateForm.reset();
-          this.selectedFile = null;
-          setTimeout(() => this.router.navigate(['/login']), 2000);
-        },
-        error: (err) => {
-          console.log('ERROR:', err);
-          this.isSubmitting = false;
-          if (err.status === 409) {
-            this.errorMessage = 'Cette adresse email est déjà utilisée.'; // ✅
-          } else {
-            this.errorMessage = 'Une erreur est survenue. Veuillez réessayer.'; // ✅
-          }
-        }
+  this.isSubmitting = false;
+  // ✅ Message vérification email
+  this.successMessage = '📧 Inscription réussie ! Vérifiez votre email pour activer votre compte.';
+  this.candidateForm.reset();
+  this.selectedFile = null;
+  // ✅ Ne pas rediriger — attendre vérification
+},
+error: (err) => {
+  this.isSubmitting = false;
+  if (err.status === 409) {
+    this.errorMessage = 'Cette adresse email est déjà utilisée.';
+  } else {
+    this.errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
+  }
+}
       });
   }
 

@@ -3,10 +3,7 @@ package com.project.backend.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.List;
@@ -43,6 +40,12 @@ public class Candidate extends User {
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Candidature> candidatures;
+
+    @Column(nullable = false)
+    private boolean emailVerifie = false;
+
+    public boolean isEmailVerifie() { return emailVerifie; }
+    public void setEmailVerifie(boolean emailVerifie) { this.emailVerifie = emailVerifie; }
 
 
     public String getAnneeDiplome() {

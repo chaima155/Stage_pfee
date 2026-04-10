@@ -11,12 +11,12 @@
 
       <div class="hero-actions">
         <button class="btn-main">Commencer</button>
-        <button class="btn-outline">Découvrir</button>
+        <button class="btn-outline" (click)="goToStage()">Découvrir</button>
       </div>
     </div>
 
     <div class="hero-image">
-      <img src="images/hiring.jpg" alt="Stage Management">
+      <img src="images\hiring.png" alt="Stage Management">
     </div>
   </section>
 
@@ -79,5 +79,5 @@
   <h2>Prêt à démarrer votre parcours professionnel ?</h2>
   <p>Rejoignez StageManager et gérez vos stages comme un pro.</p>
   <br>
-  <button>Créer un compte</button>
+  <button (click)="goToCreate()">Créer un compte</button>
 </section>
